@@ -2107,6 +2107,31 @@ function showToast(msg) {
   setTimeout(() => el.classList.remove("show"), 1800);
 }
 
+// File name builder: 名前_所属_分析名_YYMMDD.ext
+function modeLabelForFile(mode) {
+  if (mode === "sf_only") return "ストレングス分析";
+  if (mode === "brain_only") return "4脳分類";
+  return "全分析";
+}
+function safePart(s) {
+  return (s || "").replace(/[\/\\:*?"<>|]/g, "").replace(/\s+/g, "");
+}
+function yymmdd() {
+  const d = new Date();
+  return String(d.getFullYear() % 100).padStart(2, "0")
+       + String(d.getMonth() + 1).padStart(2, "0")
+       + String(d.getDate()).padStart(2, "0");
+}
+function buildFileName(ext, analysisLabel) {
+  const name = safePart(state.user.name) || "anon";
+  const team = safePart(state.user.team);
+  const parts = [name];
+  if (team) parts.push(team);
+  parts.push(analysisLabel);
+  parts.push(yymmdd());
+  return parts.join("_") + "." + ext;
+}
+
 function downloadFile(name, mime, content) {
   const blob = new Blob([content], { type: mime });
   const url = URL.createObjectURL(blob);
@@ -2297,7 +2322,7 @@ function exportJson() {
     };
     payload.brainAnswers = state.brainAnswers;
   }
-  const fname = `strengths_${TOOL_VERSION}_${(state.user.name || "anon").replace(/\s+/g,"_")}_${new Date().toISOString().slice(0,10)}.json`;
+  const fname = buildFileName("json", modeLabelForFile(mode));
   downloadFile(fname, "application/json", JSON.stringify(payload, null, 2));
   showToast("JSONを書き出しました");
 }
@@ -2313,16 +2338,22 @@ function exportCsv() {
   Object.keys(r.domainScores).forEach(d => {
     lines.push([DOMAINS[d].label, r.domainScores[d]].join(","));
   });
-  const fname = `strengths_${(state.user.name || "anon").replace(/\s+/g,"_")}_${new Date().toISOString().slice(0,10)}.csv`;
+  const fname = buildFileName("csv", modeLabelForFile(state.mode));
   downloadFile(fname, "text/csv;charset=utf-8", "﻿" + lines.join("\n"));
   showToast("CSVを書き出しました");
 }
 
-// PDF download — opens print dialog with full themes detail expanded
+// PDF download — opens print dialog with full themes detail expanded.
+// Browser uses document.title as the default save filename, so swap it for the export.
 function downloadPdf() {
-  // Expand all theme details so PDF shows full content
   document.querySelectorAll(".r-list-detail").forEach(el => el.classList.add("open"));
-  setTimeout(() => window.print(), 200);
+  const originalTitle = document.title;
+  const suggestedName = buildFileName("", modeLabelForFile(state.mode)).replace(/\.$/, "");
+  document.title = suggestedName;
+  setTimeout(() => {
+    window.print();
+    setTimeout(() => { document.title = originalTitle; }, 1500);
+  }, 200);
 }
 
 // ============================================================
@@ -2375,7 +2406,7 @@ function saveGallup() {
     takenAt: new Date().toISOString().slice(0, 10),
     themes: result.themes,
   };
-  const fname = `gallup_${(state.user.name || "anon").replace(/\s+/g, "_")}_${new Date().toISOString().slice(0, 10)}.json`;
+  const fname = buildFileName("json", "Gallup公式");
   downloadFile(fname, "application/json", JSON.stringify(payload, null, 2));
   setMsg("gallupMsg", "ok", `JSON書き出し成功（${fname}）`);
 }
