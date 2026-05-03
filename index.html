@@ -68,6 +68,26 @@ input[type="text"]:focus { outline: none; border-color: var(--text); }
 .mode-card .mode-time { font-size: 11px; color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
 .mode-card .mode-badge { position: absolute; top: -8px; right: 12px; background: var(--accent); color: white; font-size: 10px; padding: 2px 8px; border-radius: 4px; letter-spacing: .1em; font-weight: 700; }
 .mode-card.selected::after { content: "✓"; position: absolute; top: 14px; right: 14px; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
+.mode-info-btn { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: var(--panel-2); color: var(--muted); font-size: 11px; font-weight: 700; cursor: pointer; transition: all .12s; user-select: none; line-height: 1; margin-left: 4px; vertical-align: middle; }
+.mode-info-btn:hover { background: var(--text); color: white; }
+.mode-card.selected .mode-info-btn { background: rgba(168,105,13,.15); color: var(--accent); }
+.mode-card.selected .mode-info-btn:hover { background: var(--accent); color: white; }
+
+/* Modal overlay */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: flex; align-items: center; justify-content: center; z-index: 200; padding: 20px; opacity: 0; pointer-events: none; transition: opacity .15s; }
+.modal-overlay.show { opacity: 1; pointer-events: auto; }
+.modal-card { background: var(--bg); border-radius: 16px; padding: 32px 28px 28px; max-width: 520px; width: 100%; max-height: 85vh; overflow-y: auto; position: relative; box-shadow: 0 24px 64px rgba(0,0,0,.25); transform: translateY(8px); transition: transform .2s; }
+.modal-overlay.show .modal-card { transform: translateY(0); }
+.modal-close { position: absolute; top: 14px; right: 14px; width: 32px; height: 32px; border: 0; background: var(--panel-2); border-radius: 50%; font-size: 18px; cursor: pointer; line-height: 1; color: var(--text); transition: all .12s; padding: 0; font-family: inherit; }
+.modal-close:hover { background: var(--text); color: white; }
+.modal-eyebrow { font-size: 10px; letter-spacing: .25em; color: var(--accent); text-transform: uppercase; font-weight: 700; margin-bottom: 8px; }
+.modal-title { font-size: 22px; font-weight: 700; margin: 0 0 16px; letter-spacing: -.015em; }
+.modal-body { font-size: 14px; line-height: 1.85; color: var(--text); }
+.modal-body p { margin: 0 0 12px; }
+.modal-body h4 { font-size: 13px; font-weight: 700; margin: 18px 0 8px; letter-spacing: -.005em; }
+.modal-body ul { margin: 8px 0 12px; padding-left: 20px; }
+.modal-body ul li { margin-bottom: 4px; }
+.modal-body .modal-note { font-size: 12px; color: var(--muted); margin-top: 14px; padding: 10px 14px; background: var(--panel-2); border-radius: 8px; line-height: 1.7; }
 
 /* Quiz */
 .progress-wrap { margin-bottom: 24px; }
@@ -379,19 +399,19 @@ body.admin-mode .admin-only { display: revert !important; }
       <button type="button" class="mode-card selected" data-mode="both">
         <span class="mode-badge">推奨</span>
         <div class="mode-icon">🎯</div>
-        <div class="mode-title">すべて受ける</div>
+        <div class="mode-title">すべて受ける <span class="mode-info-btn" data-info="both" aria-label="詳しく">?</span></div>
         <div class="mode-desc">ストレングス分析 + 4脳分類<br>34資質 + 16タイプの統合プロフィール</div>
         <div class="mode-time">196問 / 約30〜35分</div>
       </button>
       <button type="button" class="mode-card" data-mode="sf_only">
         <div class="mode-icon">💪</div>
-        <div class="mode-title">ストレングス分析のみ</div>
+        <div class="mode-title">ストレングス分析のみ <span class="mode-info-btn" data-info="sf_only" aria-label="詳しく">?</span></div>
         <div class="mode-desc">34資質ランキングと統合アーキタイプを判定</div>
         <div class="mode-time">150ペア / 約25分</div>
       </button>
       <button type="button" class="mode-card" data-mode="brain_only">
         <div class="mode-icon">🧠</div>
-        <div class="mode-title">4脳分類のみ</div>
+        <div class="mode-title">4脳分類のみ <span class="mode-info-btn" data-info="brain_only" aria-label="詳しく">?</span></div>
         <div class="mode-desc">16タイプ（4脳 × 内外 × 陰陽）を判定</div>
         <div class="mode-time">46問 / 約8分</div>
       </button>
@@ -639,6 +659,17 @@ body.admin-mode .admin-only { display: revert !important; }
 
   <footer id="toolFooter">Compass — ストレングス分析（34資質）× 4脳分類（16タイプ）統合プロフィール</footer>
 </div>
+
+<!-- Info Modal -->
+<div class="modal-overlay" id="infoModal">
+  <div class="modal-card">
+    <button class="modal-close" id="modalCloseBtn" aria-label="閉じる">×</button>
+    <div class="modal-eyebrow" id="modalEyebrow">About</div>
+    <h3 class="modal-title" id="modalTitle">—</h3>
+    <div class="modal-body" id="modalBody">—</div>
+  </div>
+</div>
+
 <div class="toast" id="toast">保存しました</div>
 
 <script>
@@ -1192,9 +1223,104 @@ function show(name) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+// Mode info modal content
+const MODE_INFO = {
+  both: {
+    eyebrow: "Recommended Mode",
+    title: "すべて受ける（推奨）",
+    body: `
+      <p>ストレングス分析と4脳分類の<b>両方を一気に受けるモード</b>。両者の組み合わせから最も豊富な分析が得られます。</p>
+      <h4>このモードでしか見られないもの</h4>
+      <ul>
+        <li><b>統合アーキタイプ</b> — あなたの本質を1フレーズに（例: 「静謐な戦略家」「実行型キャプテン」）</li>
+        <li><b>シナジー / ギャップ</b> — 強みと本能の共鳴ポイントとズレ</li>
+        <li><b>ベストフィット環境</b> — 向いている職種・環境・役割</li>
+        <li><b>ブラインドスポット</b> — 消耗しやすい環境と眠っている強み</li>
+        <li><b>AI相談用プロンプト</b> — ChatGPT等で個別相談できるテンプレート</li>
+      </ul>
+      <div class="modal-note">所要時間: 約30〜35分（196問）。Compassの本来の使い方を体験するならこのモード。</div>
+    `,
+  },
+  sf_only: {
+    eyebrow: "About",
+    title: "ストレングス分析とは？",
+    body: `
+      <p>ストレングスファインダー（CliftonStrengths）に着想を得た自己分析手法。<br>
+      34の<b>「資質」</b>（人それぞれが持つ思考・感情・行動のパターン）を順位付けし、あなたが何によって動機づけられ、どんな行動を取りやすいかを明らかにします。</p>
+      <h4>このアプローチの特徴</h4>
+      <ul>
+        <li>弱点を補うのではなく、<b>強みに投資する</b>考え方</li>
+        <li>4領域に分類: <b>実行力 / 影響力 / 人間関係構築力 / 戦略的思考力</b></li>
+        <li>自分の「自然な得意分野」が明確になる</li>
+      </ul>
+      <h4>このモードで判定するもの</h4>
+      <ul>
+        <li>34資質ランキング（自分の強みの順位）</li>
+        <li>4領域のバランス</li>
+        <li>強みアーキタイプ（11種類）</li>
+      </ul>
+      <div class="modal-note">所要時間: 約25分（150ペアのA/B選択）。本家 Gallup CliftonStrengths とは独立した類似ツールです。</div>
+    `,
+  },
+  brain_only: {
+    eyebrow: "About",
+    title: "4脳分類とは？",
+    body: `
+      <p>人間の脳の進化構造に基づく性格分類モデル。<br>
+      脳の優先順位（爬虫類脳・哺乳類脳・人間脳の論理/抽象）から、あなたの<b>「根源的な欲求」</b>を特定します。</p>
+      <h4>4つの基本タイプ</h4>
+      <ul>
+        <li><b>支配者</b>（爬虫類脳）— 勝敗・成果・損得志向</li>
+        <li><b>遊戯者</b>（哺乳類脳）— 情緒・愛情・人間関係志向</li>
+        <li><b>観察者</b>（大脳理性）— 論理・分析・冷静さ志向</li>
+        <li><b>求道者</b>（人間脳・抽象）— 理想・価値観・本質志向</li>
+      </ul>
+      <p>これに <b>「内向 / 外向」</b> と <b>「陰 / 陽」</b> を掛け合わせて<b>16タイプ</b>に分類。本能レベルでの自分の動機構造が見えます。</p>
+      <h4>ストレングス分析との違い</h4>
+      <ul>
+        <li>ストレングス分析: 「どう動くか」（行動の型）</li>
+        <li>4脳分類: 「何を求めているか」（動機・欲求）</li>
+      </ul>
+      <div class="modal-note">所要時間: 約8分（46問）。yonnoubunrui.com の四脳分類の概念に着想を得た独立したツールです。</div>
+    `,
+  },
+};
+
+function showInfoModal(infoKey) {
+  const info = MODE_INFO[infoKey];
+  if (!info) return;
+  $("modalEyebrow").textContent = info.eyebrow;
+  $("modalTitle").textContent = info.title;
+  $("modalBody").innerHTML = info.body;
+  $("infoModal").classList.add("show");
+  document.body.style.overflow = "hidden";
+}
+
+function hideInfoModal() {
+  $("infoModal").classList.remove("show");
+  document.body.style.overflow = "";
+}
+
 // Intro
 let selectedMode = "both";
 function initIntro() {
+  // Info button on each mode card (must be wired before mode-card click to allow stopPropagation)
+  document.querySelectorAll(".mode-info-btn").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      showInfoModal(btn.dataset.info);
+    });
+  });
+  // Modal close handlers
+  $("modalCloseBtn").addEventListener("click", hideInfoModal);
+  $("infoModal").addEventListener("click", (e) => {
+    if (e.target.id === "infoModal") hideInfoModal();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && $("infoModal").classList.contains("show")) hideInfoModal();
+  });
+
   // Mode card selection
   document.querySelectorAll(".mode-card").forEach(card => {
     card.addEventListener("click", () => {
