@@ -257,6 +257,29 @@ input[type="text"]:focus { outline: none; border-color: var(--text); }
 .cross-block-body .group { margin-bottom: 12px; }
 .cross-block-body .group:last-child { margin-bottom: 0; }
 
+/* Awaken warning box (in Blind Spots) */
+.awaken-warning { padding: 14px 16px !important; background: rgba(214,56,56,.07); border-radius: 8px; margin-top: 14px !important; }
+.awaken-warning .awaken-head { margin-bottom: 10px; }
+.awaken-warning .awaken-label { display: inline-block; font-weight: 700; font-size: 11px; letter-spacing: .08em; color: #d63838; }
+.awaken-warning .awaken-msg { margin: 0 0 14px; line-height: 1.75; font-size: 13px; }
+.awaken-warning .awaken-section-label { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .08em; margin: 0 0 6px; }
+.awaken-warning .awaken-list { margin: 0 0 14px; padding-left: 20px; line-height: 1.75; font-size: 13px; }
+.awaken-warning .awaken-list:last-child { margin-bottom: 0; }
+.awaken-warning .awaken-list li { margin-bottom: 4px; }
+
+/* AI Consultation section */
+.ai-consult { padding: 28px; background: linear-gradient(135deg, rgba(28,117,184,.05), rgba(122,62,155,.05)); border: 1px solid var(--line); border-radius: 14px; }
+.ai-consult-intro { margin: 0 0 20px; line-height: 1.8; font-size: 15px; }
+.ai-consult-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 22px; }
+.ai-tag { padding: 7px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 999px; font-size: 12px; font-weight: 600; color: var(--text); }
+.btn-ai-copy { width: 100%; padding: 18px 24px; font-size: 16px; background: linear-gradient(135deg, #1c75b8, #7a3e9b); color: white; border: 0; border-radius: 12px; font-weight: 700; cursor: pointer; transition: transform .12s, box-shadow .15s, background .25s; box-shadow: 0 2px 8px rgba(0,0,0,.08); display: flex; align-items: center; justify-content: center; gap: 12px; font-family: inherit; letter-spacing: -.005em; }
+.btn-ai-copy:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(28,117,184,.20); }
+.btn-ai-copy:active { transform: translateY(0); }
+.btn-ai-copy.copied { background: linear-gradient(135deg, #1f8755, #2ecc71); }
+.btn-ai-copy .ai-copy-icon { font-size: 22px; line-height: 1; }
+.btn-ai-copy .ai-copy-label { font-size: 16px; line-height: 1; }
+.ai-consult-howto { margin-top: 16px; font-size: 12px; color: var(--muted); padding: 12px 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; line-height: 1.8; }
+
 /* Calibration block */
 .cal-block { padding: 18px 20px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 12px; }
 .cal-block summary { cursor: pointer; font-weight: 600; font-size: 14px; color: var(--text); padding: 4px 0; user-select: none; }
@@ -501,7 +524,7 @@ body.admin-mode .admin-only { display: revert !important; }
     <div class="r-section" id="crossAnalysisSection">
       <div class="r-section-head">
         <div class="r-section-label">05 — Cross Analysis</div>
-        <div class="r-section-hint">SF × 4脳の統合分析</div>
+        <div class="r-section-hint">強み × 4脳の統合分析</div>
       </div>
 
       <div class="integrated-hero">
@@ -515,7 +538,7 @@ body.admin-mode .admin-only { display: revert !important; }
           <div class="cross-block-head">
             <span class="cross-block-icon">✨</span>
             <span class="cross-block-title">シナジー</span>
-            <span class="cross-block-sub">4脳とSFが共鳴している</span>
+            <span class="cross-block-sub">4脳と強みが共鳴している</span>
           </div>
           <div class="cross-block-body" id="crossSynergy">—</div>
         </div>
@@ -539,16 +562,47 @@ body.admin-mode .admin-only { display: revert !important; }
           <div class="cross-block-head">
             <span class="cross-block-icon">🚨</span>
             <span class="cross-block-title">ブラインドスポット</span>
-            <span class="cross-block-sub">警戒すべき罠</span>
+            <span class="cross-block-sub">気をつけたい弱点・環境</span>
           </div>
           <div class="cross-block-body" id="crossBlindspot">—</div>
         </div>
       </div>
     </div>
 
+    <div class="r-section" id="aiConsultSection">
+      <div class="r-section-head">
+        <div class="r-section-label">06 — AI Consultation</div>
+        <div class="r-section-hint">結果をAIに渡して個別相談</div>
+      </div>
+
+      <div class="ai-consult">
+        <p class="ai-consult-intro">
+          この診断結果を <b>ChatGPT / Claude / Gemini</b> など他のAIにそのまま貼り付ければ、<br>
+          <b>あなたのプロフィールを理解した上での個別相談</b>ができます。
+        </p>
+
+        <div class="ai-consult-tags">
+          <span class="ai-tag">🎯 キャリアの方向性</span>
+          <span class="ai-tag">💪 強みの活かし方</span>
+          <span class="ai-tag">⚡ 消耗の原因分析</span>
+          <span class="ai-tag">🤝 最適な役割選び</span>
+          <span class="ai-tag">🌱 成長アクション</span>
+        </div>
+
+        <button class="btn btn-ai-copy" id="btnCopyAIPrompt">
+          <span class="ai-copy-icon">📋</span>
+          <span class="ai-copy-label">AI相談用プロンプトをコピー</span>
+        </button>
+
+        <div class="ai-consult-howto">
+          <b>使い方:</b> ボタンを押す → ChatGPT等のチャット欄に <b>⌘+V（Ctrl+V）</b> で貼り付け → そのまま送信。診断結果のサマリと「相談したいテーマの例」が一緒に渡るので、AIが文脈を踏まえて答えてくれます。
+        </div>
+      </div>
+    </div>
+
     <div class="r-section admin-only">
       <div class="r-section-head">
-        <div class="r-section-label">06 — Calibration</div>
+        <div class="r-section-label">07 — Calibration</div>
         <div class="r-section-hint">Gallup公式と比較して精度を測る（管理者専用）</div>
       </div>
 
@@ -1027,21 +1081,41 @@ const BRAIN_FIT = {
     fitJobs: ["営業職トップ", "経営層", "プロジェクトリーダー", "起業家", "アスリート"],
     fitEnv:  ["明確な勝敗・KPIがある環境", "競争相手がいる場面", "決断と実行が求められる役割"],
     avoid:   ["勝敗の見えない曖昧な環境", "コンセンサス重視の協調型組織", "ルーティン作業中心の役割"],
+    awaken:  [
+      "明確な勝負・KPI のある仕事に手を挙げる",
+      "ライバル・ベンチマークを意識的に設定する",
+      "結果が数字で見える役割（売上・成果）に身を置く",
+    ],
   },
   player: {
     fitJobs: ["人事・HR", "カウンセラー", "教育・コーチ", "看護・ケア職", "コミュニティマネージャー"],
     fitEnv:  ["チームワーク中心", "1on1で深く関わる仕事", "情緒的サポートが価値を持つ場面"],
     avoid:   ["数字だけで評価される競争環境", "孤立した一人作業", "対立的・冷淡な組織文化"],
+    awaken:  [
+      "1on1で深く関わる場面を意識的に増やす",
+      "信頼できる少数の人との情緒的なつながりを優先する時間を作る",
+      "人間関係が活きる役割（HR・カウンセリング・コミュニティ運営等）を視野に入れる",
+    ],
   },
   observer: {
     fitJobs: ["研究職", "戦略コンサル", "アナリスト", "エンジニア", "投資家・トレーダー"],
     fitEnv:  ["一人で深く考える時間がある環境", "論理と情報が重視される場", "リモート・専門職"],
     avoid:   ["即断即決の現場対応", "感情的な調整が多い役割", "強い同調圧力のある集団行動"],
+    awaken:  [
+      "一人で深く考える時間を意図的に確保する",
+      "論理・分析が活きる役割（戦略立案・分析業務・調査等）に手を挙げる",
+      "観察者の本領が発揮できる環境（研究・コンサル・専門職等）を視野に入れる",
+    ],
   },
   seeker: {
     fitJobs: ["クリエイター", "起業家", "ブランドマネージャー", "ビジョナリー職", "アーティスト"],
     fitEnv:  ["理想・価値観が重視される組織", "創造性が求められる場", "長期ビジョンを描ける役割"],
     avoid:   ["近視眼的な数字追求", "意義の感じられないルーチン", "価値観の合わない組織"],
+    awaken:  [
+      "自分の価値観・理想を言語化して棚卸しする時間を作る",
+      "意義を感じられる活動・プロジェクトに時間を投資する",
+      "理想の実現に向けた長期ビジョン・ロードマップを描く",
+    ],
   },
 };
 
@@ -1138,7 +1212,7 @@ function initIntro() {
   }
   if (saved && progress > 0 && saved.phase !== "done") {
     $("btnResume").style.display = "inline-flex";
-    const modeLabel = saved.mode === "sf_only" ? "SFのみ" : saved.mode === "brain_only" ? "4脳のみ" : "全部";
+    const modeLabel = saved.mode === "sf_only" ? "強みのみ" : saved.mode === "brain_only" ? "4脳のみ" : "全部";
     $("btnResume").textContent = `前回の続きから（${modeLabel}・${progress}/${total}問完了）`;
     if (saved.user) {
       $("userName").value = saved.user.name || "";
@@ -1698,8 +1772,9 @@ function computeAndRender() {
     top5: allSections[1],          // 02
     allThemes: allSections[2],     // 03
     brainProfile: allSections[3],  // 04
-    crossAnalysis: allSections[4], // 05 (NEW)
-    calibration: allSections[5],   // 06
+    crossAnalysis: allSections[4], // 05
+    aiConsult: allSections[5],     // 06 (NEW)
+    calibration: allSections[6],   // 07
   };
 
   if (mode === "sf_only") {
@@ -1710,6 +1785,7 @@ function computeAndRender() {
     sectionMap.allThemes.style.display = "";
     sectionMap.brainProfile.style.display = "none";
     sectionMap.crossAnalysis.style.display = "none";
+    sectionMap.aiConsult.style.display = "none";
     sectionMap.calibration.style.display = "";
     const result = computeScores();
     state.lastResult = result;
@@ -1725,6 +1801,7 @@ function computeAndRender() {
     sectionMap.allThemes.style.display = "none";
     sectionMap.brainProfile.style.display = "";
     sectionMap.crossAnalysis.style.display = "none";
+    sectionMap.aiConsult.style.display = "none";
     sectionMap.calibration.style.display = "none";
     const brain = computeBrainProfile();
     state.lastResult = null;
@@ -1749,6 +1826,7 @@ function computeAndRender() {
     sectionMap.allThemes.style.display = "";
     sectionMap.brainProfile.style.display = "";
     sectionMap.crossAnalysis.style.display = "";
+    sectionMap.aiConsult.style.display = "";
     sectionMap.calibration.style.display = "";
     const result = computeScores();
     const brain = computeBrainProfile();
@@ -1796,14 +1874,14 @@ function renderCrossAnalysis(result, brain) {
   const unexpectedInTop10 = top10.filter(t => affinity.unexpected.includes(t.id));
   if (unexpectedInTop10.length > 0) {
     $("crossGap").innerHTML = `
-      <p class="intro"><b>${brainName}</b>タイプとは意外な組合せの上位資質。「自己認識（4脳）」と「行動パターン（SF）」のズレが見えます:</p>
+      <p class="intro"><b>${brainName}</b>タイプとは意外な組合せの上位資質。「自己認識（4脳）」と「行動パターン（強み）」のズレが見えます:</p>
       <ul>
         ${unexpectedInTop10.slice(0, 5).map(t => `<li><b>${t.name}</b>（${t.rank}位）— ${t.short}</li>`).join("")}
       </ul>
       <p class="intro">これは矛盾ではなく、あなたの<b>多面性</b>です。${brainName}の本質を持ちながら、状況によってはこれらの行動も発揮できる柔軟さがあります。</p>
     `;
   } else {
-    $("crossGap").innerHTML = `<p class="intro">4脳タイプと SF が一致しています。自己認識と行動パターンに大きなズレがありません。</p>`;
+    $("crossGap").innerHTML = `<p class="intro">4脳タイプと強みが一致しています。自己認識と行動パターンに大きなズレがありません。</p>`;
   }
 
   // 4. Best Fit
@@ -1827,21 +1905,30 @@ function renderCrossAnalysis(result, brain) {
   const lowAlignedThemes = bottom5.filter(t => affinity.aligned.includes(t.id));
   $("crossBlindspot").innerHTML = `
     <div class="group">
-      <span class="label-strong">${brainName}が陥りやすい罠</span>
+      <span class="label-strong">${brainName}タイプが消耗しやすい環境</span>
       <ul style="margin-top: 6px;">
         ${fit.avoid.map(a => `<li>${a}</li>`).join("")}
       </ul>
     </div>
     <div class="group">
-      <span class="label-strong">SF Bottom5（弱い行動領域）</span>
+      <span class="label-strong">下位5資質（行動として現れにくい）</span>
       <ul style="margin-top: 6px;">
-        ${bottom5.map(t => `<li><b>${t.name}</b>（${t.rank}位）— ${t.short}が苦手</li>`).join("")}
+        ${bottom5.map(t => `<li><b>${t.name}</b>（${t.rank}位）— ${t.short}</li>`).join("")}
       </ul>
     </div>
     ${lowAlignedThemes.length > 0 ? `
-    <div class="group" style="padding: 10px 12px; background: rgba(214,56,56,.07); border-radius: 6px; margin-top: 10px;">
-      <span class="label-strong" style="color:#d63838;">⚠️ 注意</span>
-      ${brainName}タイプが本来武器とすべき<b>${lowAlignedThemes.map(t => t.name).join("・")}</b>が下位に。期待される強みを発揮しづらい構造かもしれません。
+    <div class="group awaken-warning">
+      <div class="awaken-head"><span class="awaken-label">⚠️ 注意</span></div>
+      <p class="awaken-msg"><b>${brainName}タイプ</b>は通常、<b>${lowAlignedThemes.map(t => `${t.name}（${t.rank}位）`).join("・")}</b> のような資質が強みとして現れやすいタイプです。今回それらが下位に出ているのは、本来の強みが日常で<b>「眠っている」</b>可能性を示唆します。</p>
+      <div class="awaken-section-label">考えられる原因</div>
+      <ul class="awaken-list">
+        <li>現在の環境・役割で本能が活かしきれていない</li>
+        <li>別の行動に意識的に力を注いでいる</li>
+      </ul>
+      <div class="awaken-section-label">アクションのヒント</div>
+      <ul class="awaken-list">
+        ${fit.awaken.map(a => `<li>${a}</li>`).join("")}
+      </ul>
     </div>
     ` : ""}
   `;
@@ -1901,6 +1988,152 @@ function downloadFile(name, mime, content) {
   a.href = url; a.download = name;
   document.body.appendChild(a); a.click(); a.remove();
   URL.revokeObjectURL(url);
+}
+
+// ============================================================
+// AI Consultation Prompt Builder
+// ============================================================
+function buildAIConsultPrompt() {
+  const r = state.lastResult;
+  const brain = state.lastBrainProfile;
+  const lines = [];
+
+  lines.push("# 自己分析結果（Compass 診断ツール）");
+  lines.push("");
+  if (state.user.name) lines.push(`- 名前: ${state.user.name}`);
+  if (state.user.team) lines.push(`- 所属: ${state.user.team}`);
+  lines.push(`- 診断日: ${new Date().toLocaleDateString("ja-JP")}`);
+  lines.push("");
+
+  // 4脳プロフィール
+  if (brain) {
+    const dom = BRAINS[brain.dominantBrain];
+    lines.push(`## 4脳分類タイプ: ${brain.typeLabel}`);
+    lines.push(`${dom.detail}`);
+    lines.push(`- 内向↔外向スコア: ${brain.ioScore > 0 ? "+" : ""}${brain.ioScore}（${brain.direction}寄り）`);
+    lines.push(`- 陰↔陽スコア: ${brain.yyScore > 0 ? "+" : ""}${brain.yyScore}（${brain.polarity}寄り）`);
+    lines.push(`- 4脳スコア: 観察者${brain.brainScores.observer} / 求道者${brain.brainScores.seeker} / 支配者${brain.brainScores.dominator} / 遊戯者${brain.brainScores.player}`);
+    lines.push("");
+  }
+
+  // 強みプロフィール
+  if (r) {
+    const archetype = computeArchetype(r.scored);
+    lines.push(`## 強みアーキタイプ: ${archetype.name}`);
+    lines.push(`${archetype.tag}`);
+    lines.push("");
+
+    lines.push(`## 強み Top 10`);
+    r.scored.slice(0, 10).forEach((t, i) => {
+      lines.push(`${i + 1}. **${t.name}** (${t.score}) — ${t.short}`);
+    });
+    lines.push("");
+
+    lines.push(`## 強み Bottom 5（行動として現れにくい）`);
+    r.scored.slice(-5).forEach(t => {
+      lines.push(`${t.rank}. ${t.name} (${t.score}) — ${t.short}`);
+    });
+    lines.push("");
+
+    lines.push(`## 領域スコア`);
+    Object.entries(r.domainScores).forEach(([d, s]) => {
+      lines.push(`- ${DOMAINS[d].label}: ${s}`);
+    });
+    lines.push("");
+  }
+
+  // クロス分析（両方ある場合のみ）
+  if (r && brain) {
+    const dominantDomain = Object.entries(r.domainScores).sort((a, b) => b[1] - a[1])[0][0];
+    const intKey = `${brain.dominantBrain}_${dominantDomain}`;
+    const integrated = INTEGRATED_ARCHETYPES[intKey];
+    if (integrated) {
+      lines.push(`## 統合アーキタイプ: ${integrated.name}`);
+      lines.push(`${brain.typeLabel} × ${DOMAINS[dominantDomain].label} → ${integrated.tag}`);
+      lines.push("");
+    }
+
+    const top10 = r.scored.slice(0, 10);
+    const bottom5 = r.scored.slice(-5);
+    const affinity = BRAIN_SF_AFFINITY[brain.dominantBrain];
+    const fit = BRAIN_FIT[brain.dominantBrain];
+    const aligned = top10.filter(t => affinity.aligned.includes(t.id));
+    const unexpected = top10.filter(t => affinity.unexpected.includes(t.id));
+    const lowAligned = bottom5.filter(t => affinity.aligned.includes(t.id));
+
+    if (aligned.length > 0) {
+      lines.push(`## シナジー（4脳と強みが共鳴）`);
+      aligned.forEach(t => lines.push(`- ${t.name}（${t.rank}位）`));
+      lines.push("");
+    }
+
+    if (unexpected.length > 0) {
+      lines.push(`## ギャップ（自己認識と行動のズレ）`);
+      lines.push(`4脳タイプとは意外な組合せの上位資質:`);
+      unexpected.forEach(t => lines.push(`- ${t.name}（${t.rank}位）`));
+      lines.push("");
+    }
+
+    lines.push(`## ベストフィット`);
+    lines.push(`- 向いている職種: ${fit.fitJobs.join("・")}`);
+    lines.push(`- 合う環境: ${fit.fitEnv.join(" / ")}`);
+    lines.push("");
+
+    lines.push(`## ブラインドスポット（消耗しやすい環境）`);
+    fit.avoid.forEach(a => lines.push(`- ${a}`));
+    lines.push("");
+
+    if (lowAligned.length > 0) {
+      lines.push(`## 注意ポイント`);
+      lines.push(`${BRAINS[brain.dominantBrain].name}タイプは通常、${lowAligned.map(t => `${t.name}（${t.rank}位）`).join("・")} のような資質が強みとして現れやすいタイプですが、今回それらが下位に出ています。本来の強みが日常で「眠っている」可能性があります。`);
+      lines.push("");
+    }
+  }
+
+  lines.push("---");
+  lines.push("");
+  lines.push("# 相談したいこと");
+  lines.push("");
+  lines.push("上記のプロフィールを踏まえて、以下のような観点で私に合ったアドバイスをください。");
+  lines.push("");
+  lines.push("- キャリア選択の方向性 — 今後どんな職種・役割を目指すべきか");
+  lines.push("- 強みの具体的な活かし方 — 上位資質をどう仕事に組み込むか");
+  lines.push("- 消耗の原因分析 — 今の働き方で疲れる理由はこの結果から何が考えられるか");
+  lines.push("- チームでの最適な役割 — どんなポジションだと一番力を発揮できるか");
+  lines.push("- 弱点との付き合い方 — 補うべきか、強みに集中すべきか");
+  lines.push("- 注意ポイントの掘り下げ — 「眠っている強み」をどう目覚めさせるか");
+  lines.push("");
+  lines.push("その他、結果から気になる点があれば自由に質問してください。");
+
+  return lines.join("\n");
+}
+
+async function copyAIPrompt() {
+  const prompt = buildAIConsultPrompt();
+  const btn = $("btnCopyAIPrompt");
+  const labelEl = btn.querySelector(".ai-copy-label");
+  const iconEl = btn.querySelector(".ai-copy-icon");
+  const originalLabel = labelEl.textContent;
+  const originalIcon = iconEl.textContent;
+  try {
+    await navigator.clipboard.writeText(prompt);
+    btn.classList.add("copied");
+    iconEl.textContent = "✓";
+    labelEl.textContent = "コピーしました！AIに貼り付けてください";
+    setTimeout(() => {
+      btn.classList.remove("copied");
+      iconEl.textContent = originalIcon;
+      labelEl.textContent = originalLabel;
+    }, 2400);
+  } catch (e) {
+    // Fallback: select-and-copy via textarea
+    const ta = document.createElement("textarea");
+    ta.value = prompt;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); showToast("コピーしました"); } catch (e2) { showToast("コピー失敗。長押しして手動コピーしてください"); }
+    document.body.removeChild(ta);
+  }
 }
 
 function exportJson() {
@@ -2142,6 +2375,8 @@ function initResults() {
       show("intro");
     }
   });
+  // AI Consultation
+  $("btnCopyAIPrompt").addEventListener("click", copyAIPrompt);
   // Calibration
   $("btnSaveGallup").addEventListener("click", saveGallup);
   $("btnFillGallupExample").addEventListener("click", fillGallupExample);
