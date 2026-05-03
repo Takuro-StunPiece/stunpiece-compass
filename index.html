@@ -1,0 +1,2162 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compass — 自己探求のための診断ツール</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="description" content="ストレングス分析（34資質）× 4脳分類（16タイプ）の統合プロフィール診断ツール">
+<meta name="theme-color" content="#fbfaf6">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="description" content="Compass — ストレングス分析（34資質）と4脳分類（16タイプ）の統合プロフィール診断ツール">
+<meta property="og:title" content="Compass — 自己探求のための診断ツール">
+<meta property="og:description" content="34資質ランキングと16タイプの4脳分類を組み合わせた統合プロフィール診断">
+<meta name="theme-color" content="#fbfaf6">
+<style>
+:root {
+  --bg: #fbfaf6;
+  --panel: #ffffff;
+  --panel-2: #f4f1e9;
+  --line: #e8e4d8;
+  --line-strong: #d4d0c1;
+  --text: #1a1a1a;
+  --muted: #6b6b6b;
+  --subtle: #9a9788;
+  --accent: #a8690d;
+  --exec: #6e3996;
+  --infl: #d97e1e;
+  --rel: #1c75b8;
+  --strat: #1f8755;
+  --shadow: 0 1px 2px rgba(0,0,0,.03), 0 8px 32px rgba(0,0,0,.04);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: -apple-system, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 32px 24px 80px; }
+header { display: flex; align-items: center; justify-content: flex-start; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
+header .brand-block { display: flex; flex-direction: column; gap: 4px; }
+header h1.tool-name { font-size: 24px; font-weight: 700; margin: 0; letter-spacing: -.015em; line-height: 1; }
+header .tool-subtitle { font-size: 11px; color: var(--muted); letter-spacing: .12em; font-weight: 600; }
+
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 32px; box-shadow: var(--shadow); }
+.card + .card { margin-top: 20px; }
+h2 { font-size: 20px; font-weight: 600; margin: 0 0 16px; letter-spacing: -.005em; }
+p.lead { color: var(--muted); margin: 0 0 24px; line-height: 1.75; }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 22px; border: 1px solid var(--text); border-radius: 8px; background: var(--text); color: white; font-weight: 600; font-size: 14px; cursor: pointer; transition: background .12s, transform .08s, color .12s; text-decoration: none; font-family: inherit; }
+.btn:hover { background: #000; transform: translateY(-1px); }
+.btn:disabled { opacity: .35; cursor: not-allowed; transform: none; }
+.btn.ghost { background: transparent; color: var(--text); border-color: var(--line-strong); }
+.btn.ghost:hover { background: var(--panel-2); border-color: var(--text); transform: none; }
+
+/* Inputs */
+input[type="text"] { width: 100%; padding: 11px 14px; background: var(--panel); border: 1px solid var(--line-strong); border-radius: 8px; color: var(--text); font-size: 15px; font-family: inherit; }
+input[type="text"]:focus { outline: none; border-color: var(--text); }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+.field-row label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; font-weight: 500; }
+
+/* Mode selection */
+.mode-section-label { font-size: 11px; letter-spacing: .2em; color: var(--muted); text-transform: uppercase; font-weight: 700; margin: 4px 0 12px; }
+.mode-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 28px; }
+@media (max-width: 720px) { .mode-grid { grid-template-columns: 1fr; } }
+.mode-card { padding: 20px 18px; background: var(--panel); border: 2px solid var(--line); border-radius: 12px; cursor: pointer; transition: all .15s ease; position: relative; text-align: left; font-family: inherit; color: var(--text); }
+.mode-card:hover { border-color: var(--text); background: var(--panel-2); }
+.mode-card.selected { border-color: var(--accent); background: rgba(168,105,13,.04); box-shadow: 0 4px 12px rgba(168,105,13,.08); }
+.mode-card .mode-icon { font-size: 22px; margin-bottom: 8px; line-height: 1; }
+.mode-card .mode-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; letter-spacing: -.005em; }
+.mode-card .mode-desc { font-size: 12px; color: var(--muted); line-height: 1.6; margin-bottom: 8px; }
+.mode-card .mode-time { font-size: 11px; color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+.mode-card .mode-badge { position: absolute; top: -8px; right: 12px; background: var(--accent); color: white; font-size: 10px; padding: 2px 8px; border-radius: 4px; letter-spacing: .1em; font-weight: 700; }
+.mode-card.selected::after { content: "✓"; position: absolute; top: 14px; right: 14px; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
+
+/* Quiz */
+.progress-wrap { margin-bottom: 24px; }
+.progress-meta { display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; color: var(--muted); margin-bottom: 8px; letter-spacing: .02em; }
+.progress-meta .counter { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--text); }
+.progress-meta .counter .total { color: var(--muted); font-weight: 500; }
+.progress-meta .counter .pct { margin-left: 10px; color: var(--muted); font-weight: 500; }
+.progress { height: 8px; background: var(--panel-2); border-radius: 4px; overflow: hidden; }
+.progress > div { height: 100%; background: linear-gradient(90deg, var(--accent), #d8851a); transition: width .35s cubic-bezier(.4,.0,.2,1); border-radius: 4px; }
+
+/* Per-question timer */
+.timer-row { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+.timer-bar { flex: 1; height: 3px; background: var(--panel-2); border-radius: 2px; overflow: hidden; }
+.timer-bar > div { height: 100%; width: 100%; background: var(--accent); }
+.timer-secs { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; min-width: 36px; text-align: right; font-weight: 700; letter-spacing: -.005em; }
+.timer-row.warning .timer-bar > div { background: #d63838; }
+.timer-row.warning .timer-secs { color: #d63838; }
+@keyframes timer-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+.timer-row.warning .timer-secs { animation: timer-pulse 1s ease-in-out infinite; }
+.q-instruction { font-size: 13px; color: var(--muted); margin: 0 0 20px; text-align: center; }
+
+/* Ipsative pair UI */
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 28px; }
+@media (max-width: 720px) { .pair { grid-template-columns: 1fr; gap: 14px; } }
+.pair-stmt { padding: 24px 22px; background: var(--panel); border: 2px solid var(--line-strong); border-radius: 12px; position: relative; min-height: 130px; transition: border-color .12s, background .12s; }
+.pair-stmt.pair-a { border-color: rgba(168,105,13,.4); background: rgba(168,105,13,.02); }
+.pair-stmt.pair-b { border-color: rgba(28,117,184,.4); background: rgba(28,117,184,.02); }
+.pair-stmt .pair-letter { position: absolute; top: -14px; left: 18px; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; color: white; letter-spacing: .02em; }
+.pair-a .pair-letter { background: var(--accent); }
+.pair-b .pair-letter { background: var(--rel); }
+.pair-stmt .pair-text { font-size: 16px; line-height: 1.7; color: var(--text); padding-top: 4px; font-weight: 500; }
+
+/* Phase banner */
+.phase-banner { display: none; padding: 8px 14px; background: var(--panel-2); border-radius: 6px; font-size: 11px; font-weight: 700; letter-spacing: .2em; color: var(--accent); text-transform: uppercase; margin-bottom: 16px; text-align: center; }
+.phase-banner.show { display: block; }
+
+/* Likert question (single statement) */
+.likert-q { padding: 32px 28px; background: var(--panel); border: 2px solid var(--line-strong); border-radius: 12px; margin-bottom: 28px; min-height: 130px; display: flex; align-items: center; justify-content: center; }
+.likert-q .likert-text { font-size: 18px; line-height: 1.7; color: var(--text); font-weight: 500; text-align: center; max-width: 720px; }
+
+.ipsative-scale { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.ipsative-scale button { padding: 14px 6px; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--panel); color: var(--text); cursor: pointer; transition: all .12s ease; font-family: inherit; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.ipsative-scale button .big { font-size: 22px; font-weight: 700; line-height: 1; }
+.ipsative-scale button .lbl { font-size: 11px; color: var(--muted); letter-spacing: -.005em; }
+.ipsative-scale button[data-val="1"] .big, .ipsative-scale button[data-val="2"] .big { color: var(--accent); }
+.ipsative-scale button[data-val="3"] .big { color: var(--subtle); font-weight: 500; }
+.ipsative-scale button[data-val="4"] .big, .ipsative-scale button[data-val="5"] .big { color: var(--rel); }
+.ipsative-scale button:hover { border-color: var(--text); background: var(--panel-2); }
+.ipsative-scale button.active { border-color: var(--text); background: var(--text); }
+.ipsative-scale button.active .big { color: white; }
+.ipsative-scale button.active .lbl { color: rgba(255,255,255,.7); }
+.nav-row { display: flex; justify-content: flex-end; margin-top: 28px; }
+
+@media (max-width: 720px) {
+  .field-row { grid-template-columns: 1fr; }
+  .ipsative-scale { gap: 4px; }
+  .ipsative-scale button { padding: 10px 2px; }
+  .ipsative-scale button .big { font-size: 18px; }
+  .ipsative-scale button .lbl { font-size: 9px; }
+  .pair-stmt { min-height: auto; padding: 18px 16px; }
+  .pair-stmt .pair-text { font-size: 14px; }
+}
+
+/* === Results === */
+#screen-results.card { background: transparent; border: 0; padding: 8px 0 0; box-shadow: none; }
+.r-hero { padding: 16px 0 56px; }
+.r-eyebrow { font-size: 10px; letter-spacing: .28em; color: var(--muted); text-transform: uppercase; font-weight: 700; margin-bottom: 14px; }
+.r-name { font-size: 28px; font-weight: 600; margin: 0; letter-spacing: -.015em; color: var(--text); }
+.r-meta { font-size: 13px; color: var(--muted); margin: 6px 0 56px; }
+.r-archetype-label { font-size: 10px; letter-spacing: .28em; color: var(--accent); text-transform: uppercase; font-weight: 700; margin-bottom: 14px; }
+.r-archetype-name { font-size: 56px; font-weight: 700; line-height: 1.05; letter-spacing: -.035em; margin: 0 0 18px; color: var(--text); }
+.r-archetype-tag { font-size: 16px; color: var(--text); opacity: .8; max-width: 640px; line-height: 1.8; margin: 0; }
+@media (max-width: 720px) { .r-archetype-name { font-size: 38px; } }
+
+.r-section { padding: 56px 0; border-top: 1px solid var(--line); }
+.r-section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 32px; flex-wrap: wrap; gap: 8px; }
+.r-section-label { font-size: 10px; letter-spacing: .28em; color: var(--muted); text-transform: uppercase; font-weight: 700; }
+.r-section-hint { font-size: 12px; color: var(--muted); }
+
+/* DNA strip */
+.dna-meta { display: flex; justify-content: space-between; font-size: 10px; color: var(--subtle); margin-bottom: 8px; letter-spacing: .15em; text-transform: uppercase; font-weight: 600; }
+.dna-strip { display: flex; gap: 3px; height: 56px; margin-bottom: 32px; }
+.dna-bar { flex: 1; border-radius: 2px; cursor: default; transition: opacity .12s; min-width: 0; }
+.dna-bar:hover { opacity: .7; }
+
+/* Strength Matrix */
+.matrix { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+@media (max-width: 720px) { .matrix { grid-template-columns: repeat(2, 1fr); } }
+.matrix-col { display: flex; flex-direction: column; }
+.matrix-col .col-head { padding: 12px 10px; text-align: center; color: white; font-size: 12px; font-weight: 700; letter-spacing: .08em; border-radius: 8px 8px 0 0; }
+.matrix-col[data-d="exec"] .col-head { background: var(--exec); }
+.matrix-col[data-d="infl"] .col-head { background: var(--infl); }
+.matrix-col[data-d="rel"] .col-head { background: var(--rel); }
+.matrix-col[data-d="strat"] .col-head { background: var(--strat); }
+.matrix-cells { display: grid; gap: 3px; padding: 3px 0 0; grid-auto-rows: 76px; }
+.cell { padding: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; transition: transform .12s, box-shadow .12s; border-radius: 4px; text-align: center; }
+.cell:hover { transform: scale(1.025); box-shadow: 0 4px 12px rgba(0,0,0,.08); z-index: 1; position: relative; }
+.cell .rank { font-size: 22px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+.cell .nm { font-size: 11.5px; line-height: 1.3; font-weight: 600; letter-spacing: -.005em; }
+
+/* Dominant band */
+.dominant-band { margin-top: 36px; padding: 24px 28px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
+.dominant-band p { margin: 0 0 18px; font-size: 14px; color: var(--text); line-height: 1.7; }
+.dominant-band p .hl { font-weight: 700; color: var(--accent); }
+.dominant-bar { display: flex; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 14px; }
+.dominant-bar > div { transition: flex .3s ease; }
+.dominant-legend { display: flex; gap: 20px; flex-wrap: wrap; font-size: 11px; color: var(--muted); }
+.dominant-legend span.item { display: inline-flex; align-items: center; gap: 7px; }
+.dominant-legend .swatch { width: 10px; height: 10px; border-radius: 2px; }
+.dominant-legend .item b { color: var(--text); font-variant-numeric: tabular-nums; font-weight: 700; }
+
+/* Top 5 */
+.r-top5 .row { display: grid; grid-template-columns: 60px 1fr auto; gap: 28px; align-items: baseline; padding: 24px 0; border-top: 1px solid var(--line); }
+.r-top5 .row:first-child { border-top: 0; padding-top: 8px; }
+.r-top5 .rank { font-size: 13px; color: var(--muted); letter-spacing: .12em; font-variant-numeric: tabular-nums; padding-top: 6px; }
+.r-top5 .body .name { font-size: 24px; font-weight: 600; letter-spacing: -.015em; line-height: 1.2; color: var(--text); }
+.r-top5 .body .desc { font-size: 14px; color: var(--muted); margin-top: 8px; line-height: 1.7; max-width: 540px; }
+.r-top5 .body .dom { display: inline-block; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; margin-top: 12px; padding-bottom: 2px; border-bottom: 1px solid currentColor; font-weight: 700; }
+.r-top5 .score { font-size: 32px; font-weight: 600; line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; padding-top: 4px; color: var(--text); }
+.r-top5 .score .pct { font-size: 13px; color: var(--muted); margin-left: 2px; font-weight: 400; }
+
+/* All themes detail list */
+.r-list-row { display: grid; grid-template-columns: 28px 14px 1fr 140px 36px; gap: 16px; align-items: center; padding: 14px 4px; border-bottom: 1px solid var(--line); cursor: pointer; transition: background .12s; }
+.r-list-row:hover { background: var(--panel-2); }
+.r-list-row .rk { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.r-list-row .dot { width: 8px; height: 8px; border-radius: 50%; }
+.r-list-row .nm { font-size: 15px; font-weight: 500; }
+.r-list-row .br { height: 3px; background: var(--panel-2); border-radius: 2px; overflow: hidden; }
+.r-list-row .br > div { height: 100%; }
+.r-list-row .sc { text-align: right; font-size: 14px; font-variant-numeric: tabular-nums; font-weight: 600; }
+.r-list-detail { padding: 4px 12px 18px 58px; font-size: 13px; color: var(--muted); line-height: 1.85; display: none; max-width: 760px; }
+.r-list-detail.open { display: block; }
+.r-list-row.expanded { background: var(--panel-2); }
+.r-list-row.expanded .nm { color: var(--accent); }
+
+/* Export */
+.r-export { padding-top: 32px; margin-top: 16px; border-top: 1px solid var(--line); display: flex; gap: 8px; flex-wrap: wrap; }
+.r-export .btn { padding: 10px 18px; font-size: 13px; }
+
+/* Brain profile */
+.brain-hero { padding: 16px 0 28px; }
+.brain-eyebrow { font-size: 10px; letter-spacing: .28em; color: var(--accent); text-transform: uppercase; font-weight: 700; margin-bottom: 14px; }
+.brain-typelabel { font-size: 48px; font-weight: 700; line-height: 1.1; letter-spacing: -.03em; margin: 0 0 16px; color: var(--text); }
+@media (max-width: 720px) { .brain-typelabel { font-size: 34px; } }
+.brain-typetag { font-size: 15px; color: var(--text); opacity: .82; max-width: 640px; line-height: 1.8; margin: 0; }
+.brain-profile { display: grid; grid-template-columns: 1.2fr 1fr; gap: 36px; margin-top: 24px; }
+@media (max-width: 720px) { .brain-profile { grid-template-columns: 1fr; gap: 24px; } }
+.brain-bars { display: grid; grid-template-columns: 1fr; gap: 18px; }
+.brain-bars .bar-row { display: grid; grid-template-columns: 90px 1fr 50px; gap: 12px; align-items: center; }
+.brain-bars .bar-name { font-size: 13px; font-weight: 600; }
+.brain-bars .bar-track { height: 10px; background: var(--panel-2); border-radius: 5px; overflow: hidden; }
+.brain-bars .bar-fill { height: 100%; border-radius: 5px; transition: width .4s ease; }
+.brain-bars .bar-score { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; font-size: 14px; }
+.brain-axes { display: grid; grid-template-columns: 1fr; gap: 24px; align-content: center; }
+.brain-axis { padding: 18px 20px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
+.brain-axis .axis-label { display: flex; justify-content: space-between; font-size: 11px; letter-spacing: .12em; font-weight: 700; color: var(--muted); text-transform: uppercase; margin-bottom: 12px; }
+.brain-axis .axis-track { position: relative; height: 4px; background: var(--panel-2); border-radius: 2px; }
+.brain-axis .axis-track .axis-mid { position: absolute; left: 50%; top: -2px; width: 1px; height: 8px; background: var(--line-strong); }
+.brain-axis .axis-marker { position: absolute; top: -7px; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); border: 3px solid var(--panel); box-shadow: 0 2px 6px rgba(0,0,0,.15); transform: translateX(-50%); transition: left .4s ease; }
+.brain-axis .axis-value { display: flex; justify-content: space-between; font-size: 12px; color: var(--text); font-weight: 600; margin-top: 14px; }
+.brain-axis .axis-value .now { color: var(--accent); font-variant-numeric: tabular-nums; }
+
+/* Integrated Archetype + Cross Analysis */
+.integrated-hero { padding: 24px 28px; background: linear-gradient(135deg, rgba(168,105,13,.06), rgba(168,105,13,.02)); border: 1px solid rgba(168,105,13,.25); border-radius: 14px; margin-bottom: 28px; }
+.integrated-name { font-size: 40px; font-weight: 700; line-height: 1.1; letter-spacing: -.025em; margin: 8px 0 12px; color: var(--text); }
+@media (max-width: 720px) { .integrated-name { font-size: 30px; } }
+.integrated-tag { font-size: 14px; color: var(--text); opacity: .85; line-height: 1.8; margin: 0; }
+
+.cross-blocks { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 720px) { .cross-blocks { grid-template-columns: 1fr; } }
+.cross-block { padding: 20px 22px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; border-left: 4px solid var(--line-strong); }
+.cross-block.syn   { border-left-color: #1f8755; background: rgba(31,135,85,.025); }
+.cross-block.gap   { border-left-color: #d97e1e; background: rgba(217,126,30,.025); }
+.cross-block.fit   { border-left-color: #1c75b8; background: rgba(28,117,184,.025); }
+.cross-block.blind { border-left-color: #d63838; background: rgba(214,56,56,.025); }
+.cross-block-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.cross-block-icon { font-size: 18px; }
+.cross-block-title { font-size: 14px; font-weight: 700; }
+.cross-block-sub { font-size: 11px; color: var(--muted); letter-spacing: .04em; }
+.cross-block-body { font-size: 13px; line-height: 1.75; color: var(--text); }
+.cross-block-body p { margin: 0 0 10px; }
+.cross-block-body p.intro { color: var(--muted); }
+.cross-block-body ul { margin: 0 0 10px; padding-left: 20px; }
+.cross-block-body ul li { margin-bottom: 6px; }
+.cross-block-body ul li b { font-weight: 700; }
+.cross-block-body .label-strong { display: inline-block; font-weight: 700; font-size: 11px; letter-spacing: .04em; color: var(--muted); text-transform: uppercase; margin-right: 6px; }
+.cross-block-body .group { margin-bottom: 12px; }
+.cross-block-body .group:last-child { margin-bottom: 0; }
+
+/* Calibration block */
+.cal-block { padding: 18px 20px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 12px; }
+.cal-block summary { cursor: pointer; font-weight: 600; font-size: 14px; color: var(--text); padding: 4px 0; user-select: none; }
+.cal-block summary::marker { color: var(--accent); }
+.cal-block[open] summary { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.cal-block p.cal-hint { font-size: 12px; color: var(--muted); margin: 0 0 12px; line-height: 1.7; }
+.cal-block textarea { width: 100%; min-height: 280px; padding: 12px 14px; background: var(--panel-2); border: 1px solid var(--line-strong); border-radius: 8px; color: var(--text); font-family: inherit; font-size: 13px; line-height: 1.7; resize: vertical; }
+.cal-block textarea:focus { outline: none; border-color: var(--text); background: var(--panel); }
+.cal-block .cal-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; align-items: center; }
+.cal-block .cal-actions .btn { padding: 9px 16px; font-size: 13px; }
+.cal-block input[type="file"] { font-size: 12px; padding: 6px; }
+.cal-msg { margin-top: 10px; font-size: 12px; padding: 8px 12px; border-radius: 6px; }
+.cal-msg.ok { background: rgba(31,135,85,.08); color: #1f8755; border: 1px solid rgba(31,135,85,.25); }
+.cal-msg.err { background: rgba(214,56,56,.08); color: #d63838; border: 1px solid rgba(214,56,56,.25); }
+
+/* Comparison report */
+.cmp-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 16px 0 24px; }
+@media (max-width: 720px) { .cmp-summary { grid-template-columns: repeat(2, 1fr); } }
+.cmp-stat { padding: 14px; background: var(--panel-2); border-radius: 8px; }
+.cmp-stat .lbl { font-size: 10px; letter-spacing: .15em; color: var(--muted); text-transform: uppercase; font-weight: 700; }
+.cmp-stat .val { font-size: 24px; font-weight: 700; line-height: 1; margin-top: 6px; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.cmp-stat .val.good { color: #1f8755; }
+.cmp-stat .val.bad { color: #d63838; }
+.cmp-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 16px; }
+.cmp-table th { font-size: 10px; letter-spacing: .15em; color: var(--muted); text-transform: uppercase; font-weight: 600; padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--line-strong); }
+.cmp-table td { padding: 8px 10px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+.cmp-table td.theme-cell { font-variant-numeric: normal; font-weight: 500; }
+.cmp-table .delta-bad { color: #d63838; font-weight: 700; }
+.cmp-table .delta-good { color: #1f8755; font-weight: 600; }
+.cmp-table .delta-ok { color: var(--muted); }
+
+/* Toast */
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--text); color: white; padding: 12px 20px; border-radius: 8px; font-size: 13px; opacity: 0; transition: opacity .3s ease; pointer-events: none; z-index: 100; box-shadow: 0 8px 24px rgba(0,0,0,.15); }
+.toast.show { opacity: 1; }
+
+footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line); }
+.hidden { display: none !important; }
+
+/* Admin-only sections (e.g., Calibration UI) */
+.admin-only { display: none !important; }
+body.admin-mode .admin-only { display: revert !important; }
+
+/* ============================================================
+   Print — preserve on-screen look in PDF
+   ============================================================ */
+@page {
+  size: A4;
+  margin: 12mm;
+}
+@media print {
+  *, *::before, *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  html, body { background: var(--bg) !important; }
+  .wrap { padding: 0 !important; max-width: 100% !important; }
+  header, .r-export, footer { display: none !important; }
+  #screen-quiz, #screen-intro { display: none !important; }
+  #screen-results.card { padding: 0 !important; }
+  .r-hero { padding: 0 0 32px !important; page-break-after: avoid; }
+  .r-archetype-name { font-size: 44px !important; }
+  .r-section { padding: 28px 0 !important; page-break-inside: avoid; break-inside: avoid; }
+  .r-section-head { margin-bottom: 18px !important; }
+  .dna-strip { height: 40px !important; margin-bottom: 18px !important; page-break-inside: avoid; }
+  .matrix { page-break-inside: avoid; break-inside: avoid; }
+  .matrix-cells { grid-auto-rows: 60px !important; }
+  .cell { box-shadow: none !important; }
+  .cell .rank { font-size: 18px !important; }
+  .cell .nm { font-size: 10px !important; }
+  .matrix-col .col-head { font-size: 10px !important; padding: 8px 6px !important; }
+  .dominant-band { margin-top: 18px !important; padding: 16px !important; page-break-inside: avoid; }
+  .r-top5 .row { padding: 14px 0 !important; page-break-inside: avoid; }
+  .r-top5 .body .name { font-size: 18px !important; }
+  .r-top5 .score { font-size: 24px !important; }
+  .r-list-row { padding: 8px 4px !important; page-break-inside: avoid; }
+  .r-list-detail.open { display: block !important; padding: 4px 0 8px 58px !important; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand-block">
+      <h1 class="tool-name" id="toolBrand">Compass</h1>
+      <div class="tool-subtitle">自己探求のための診断ツール</div>
+    </div>
+  </header>
+
+  <!-- INTRO -->
+  <section id="screen-intro" class="card">
+    <h2>はじめに</h2>
+    <p class="lead">A/Bの2文を比較して、より自分に当てはまる方を選ぶ形式です。考え込まず、第一印象で。<br>各問<b>40秒</b>の制限があり、時間切れは自動で次へ進みます。一度回答した質問には戻れません。</p>
+
+    <div class="mode-section-label">どのパートを受けますか？</div>
+    <div class="mode-grid">
+      <button type="button" class="mode-card selected" data-mode="both">
+        <span class="mode-badge">推奨</span>
+        <div class="mode-icon">🎯</div>
+        <div class="mode-title">すべて受ける</div>
+        <div class="mode-desc">ストレングス分析 + 4脳分類<br>34資質 + 16タイプの統合プロフィール</div>
+        <div class="mode-time">196問 / 約30〜35分</div>
+      </button>
+      <button type="button" class="mode-card" data-mode="sf_only">
+        <div class="mode-icon">💪</div>
+        <div class="mode-title">ストレングス分析のみ</div>
+        <div class="mode-desc">34資質ランキングと統合アーキタイプを判定</div>
+        <div class="mode-time">150ペア / 約25分</div>
+      </button>
+      <button type="button" class="mode-card" data-mode="brain_only">
+        <div class="mode-icon">🧠</div>
+        <div class="mode-title">4脳分類のみ</div>
+        <div class="mode-desc">16タイプ（4脳 × 内外 × 陰陽）を判定</div>
+        <div class="mode-time">46問 / 約8分</div>
+      </button>
+    </div>
+
+    <div class="field-row">
+      <div>
+        <label for="userName">お名前（任意）</label>
+        <input id="userName" type="text" placeholder="山田 太郎" autocomplete="off">
+      </div>
+      <div>
+        <label for="userTeam">所属／メモ（任意）</label>
+        <input id="userTeam" type="text" placeholder="営業チーム" autocomplete="off">
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn" id="btnStart">診断を開始する</button>
+      <button class="btn ghost" id="btnResume" style="display:none;">前回の続きから</button>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="screen-quiz" class="card hidden">
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span class="counter"><span id="qCount">0</span><span class="total"> / <span id="qTotal">—</span></span><span class="pct" id="qPct">0%</span></span>
+        <span id="qDomain">— vs —</span>
+      </div>
+      <div class="progress"><div id="progressBar" style="width:0%"></div></div>
+      <div class="timer-row" id="timerRow">
+        <div class="timer-bar"><div id="timerBar"></div></div>
+        <div class="timer-secs"><span id="timerSecs">40</span>秒</div>
+      </div>
+    </div>
+    <p class="q-instruction" id="qInstruction">どちらがより自分に当てはまりますか？（40秒で自動的に次へ進みます）</p>
+    <div class="phase-banner" id="phaseBanner"></div>
+    <div class="pair" id="pairContainer">
+      <div class="pair-stmt pair-a">
+        <div class="pair-letter" id="pairLetterA">A</div>
+        <div class="pair-text" id="qTextA">—</div>
+      </div>
+      <div class="pair-stmt pair-b">
+        <div class="pair-letter" id="pairLetterB">B</div>
+        <div class="pair-text" id="qTextB">—</div>
+      </div>
+    </div>
+    <div class="likert-q hidden" id="likertContainer">
+      <div class="likert-text" id="qLikertText">—</div>
+    </div>
+    <div class="ipsative-scale" id="scaleContainer">
+      <button data-val="1"><span class="big" id="b1Big">A</span><span class="lbl" id="b1Lbl">強くA</span></button>
+      <button data-val="2"><span class="big" id="b2Big">A</span><span class="lbl" id="b2Lbl">ややA</span></button>
+      <button data-val="3"><span class="big" id="b3Big">＝</span><span class="lbl" id="b3Lbl">どちらとも</span></button>
+      <button data-val="4"><span class="big" id="b4Big">B</span><span class="lbl" id="b4Lbl">ややB</span></button>
+      <button data-val="5"><span class="big" id="b5Big">B</span><span class="lbl" id="b5Lbl">強くB</span></button>
+    </div>
+    <div class="nav-row">
+      <button class="btn ghost" id="btnReset">最初からやり直す</button>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section id="screen-results" class="card hidden">
+    <div class="r-hero">
+      <div class="r-eyebrow">Strength Profile</div>
+      <h2 class="r-name" id="rName">—</h2>
+      <div class="r-meta" id="rMeta">—</div>
+
+      <div class="r-archetype-label">Archetype</div>
+      <h1 class="r-archetype-name" id="rArchetypeName">—</h1>
+      <p class="r-archetype-tag" id="rArchetypeTag">—</p>
+    </div>
+
+    <div class="r-section">
+      <div class="r-section-head">
+        <div class="r-section-label">01 — Strength Map</div>
+        <div class="r-section-hint">資質の順位と領域分布</div>
+      </div>
+
+      <div class="dna-meta">
+        <span>順位: 高 →</span>
+        <span>低</span>
+      </div>
+      <div class="dna-strip" id="dnaStrip"></div>
+
+      <div class="matrix" id="matrix"></div>
+
+      <div class="dominant-band">
+        <p id="dominantText">—</p>
+        <div class="dominant-bar" id="dominantBar"></div>
+        <div class="dominant-legend" id="dominantLegend"></div>
+      </div>
+    </div>
+
+    <div class="r-section">
+      <div class="r-section-head">
+        <div class="r-section-label">02 — Top 5 Strengths</div>
+        <div class="r-section-hint">最も強い5資質</div>
+      </div>
+      <div class="r-top5" id="rTop5"></div>
+    </div>
+
+    <div class="r-section">
+      <div class="r-section-head">
+        <div class="r-section-label">03 — All 34 Themes</div>
+        <div class="r-section-hint">クリックで詳細</div>
+      </div>
+      <div id="rList"></div>
+    </div>
+
+    <div class="r-section">
+      <div class="r-section-head">
+        <div class="r-section-label">04 — 4脳プロフィール</div>
+        <div class="r-section-hint">本能ベースの動機タイプ判定</div>
+      </div>
+      <div class="brain-hero">
+        <div class="brain-eyebrow">Brain Type</div>
+        <h2 class="brain-typelabel" id="bTypeLabel">—</h2>
+        <p class="brain-typetag" id="bTypeTag">—</p>
+      </div>
+      <div class="brain-profile">
+        <div class="brain-bars" id="brainBars"></div>
+        <div class="brain-axes">
+          <div class="brain-axis" id="axisIO"></div>
+          <div class="brain-axis" id="axisYY"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="r-section" id="crossAnalysisSection">
+      <div class="r-section-head">
+        <div class="r-section-label">05 — Cross Analysis</div>
+        <div class="r-section-hint">SF × 4脳の統合分析</div>
+      </div>
+
+      <div class="integrated-hero">
+        <div class="brain-eyebrow">Integrated Archetype</div>
+        <h2 class="integrated-name" id="integratedName">—</h2>
+        <p class="integrated-tag" id="integratedTag">—</p>
+      </div>
+
+      <div class="cross-blocks">
+        <div class="cross-block syn">
+          <div class="cross-block-head">
+            <span class="cross-block-icon">✨</span>
+            <span class="cross-block-title">シナジー</span>
+            <span class="cross-block-sub">4脳とSFが共鳴している</span>
+          </div>
+          <div class="cross-block-body" id="crossSynergy">—</div>
+        </div>
+        <div class="cross-block gap">
+          <div class="cross-block-head">
+            <span class="cross-block-icon">⚡</span>
+            <span class="cross-block-title">ギャップ</span>
+            <span class="cross-block-sub">自己認識と行動のズレ</span>
+          </div>
+          <div class="cross-block-body" id="crossGap">—</div>
+        </div>
+        <div class="cross-block fit">
+          <div class="cross-block-head">
+            <span class="cross-block-icon">🎯</span>
+            <span class="cross-block-title">ベストフィット</span>
+            <span class="cross-block-sub">向いている職種・環境</span>
+          </div>
+          <div class="cross-block-body" id="crossFit">—</div>
+        </div>
+        <div class="cross-block blind">
+          <div class="cross-block-head">
+            <span class="cross-block-icon">🚨</span>
+            <span class="cross-block-title">ブラインドスポット</span>
+            <span class="cross-block-sub">警戒すべき罠</span>
+          </div>
+          <div class="cross-block-body" id="crossBlindspot">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="r-section admin-only">
+      <div class="r-section-head">
+        <div class="r-section-label">06 — Calibration</div>
+        <div class="r-section-hint">Gallup公式と比較して精度を測る（管理者専用）</div>
+      </div>
+
+      <details class="cal-block">
+        <summary>① Gallup公式の結果を入力する</summary>
+        <p class="cal-hint">Gallup公式の34資質を順位順に1行ずつ入力してください。書き出されたJSONを <code>analysis/strengths-calibration/results/</code> に保存すると、社員横断の集計に使えます。</p>
+        <textarea id="gallupInput" placeholder="個別化&#10;親密性&#10;着想&#10;分析思考&#10;未来志向&#10;…&#10;（Gallup公式の34資質を順位順に）"></textarea>
+        <div class="cal-actions">
+          <button class="btn" id="btnSaveGallup">JSON書き出し</button>
+          <button class="btn ghost" id="btnFillGallupExample">サンプル入力</button>
+        </div>
+        <div id="gallupMsg"></div>
+      </details>
+
+      <details class="cal-block">
+        <summary>② 自作ツール結果と Gallup結果を比較する</summary>
+        <p class="cal-hint">Gallup結果のJSONをアップロードすると、現在表示中の自作ツール結果との対応表とズレが表示されます。</p>
+        <div class="cal-actions">
+          <input type="file" id="gallupFileInput" accept="application/json">
+          <button class="btn" id="btnCompare">比較する</button>
+        </div>
+        <div id="cmpMsg"></div>
+        <div id="cmpResult"></div>
+      </details>
+    </div>
+
+    <div class="r-export">
+      <button class="btn" id="btnPrint">PDFでダウンロード</button>
+      <button class="btn ghost" id="btnExportJson">JSON書き出し</button>
+      <button class="btn ghost" id="btnExportCsv">CSV書き出し</button>
+      <button class="btn ghost" id="btnRetake">もう一度受ける</button>
+    </div>
+  </section>
+
+  <footer id="toolFooter">Compass — ストレングス分析（34資質）× 4脳分類（16タイプ）統合プロフィール</footer>
+</div>
+<div class="toast" id="toast">保存しました</div>
+
+<script>
+// ============================================================
+// 34 themes — Gallup-aligned naming
+// ============================================================
+const THEMES = [
+  // EXECUTING (9)
+  { id: "achiever", name: "達成欲", domain: "exec", short: "目標を追い、生産性に喜びを感じる", detail: "毎日何かを成し遂げたいという内的な衝動を持つ。タスクをこなすこと自体に満足を覚え、生産性が下がると不安になる。継続的なアウトプットが武器。活かし方：明確な目標と進捗の可視化が燃料になる。" },
+  { id: "planner", name: "目標志向", domain: "exec", short: "ゴールを定めて雑音を切り捨てる", detail: "一度ゴールを定めると、そこに繋がらない選択肢を雑音として切り捨てる集中力を持つ。優先順位の判断が速く、脱線を嫌う。活かし方：単一ゴールを追う案件のリード、長期プロジェクトの軸維持。" },
+  { id: "arranger", name: "アレンジ", domain: "exec", short: "多くの要素を最適な順序に組み合わせる", detail: "複雑な状況の中で、人・タスク・リソースを動的に組み合わせて最適化する力。変化に強い柔軟な実行家。活かし方：マルチプロジェクト管理、現場運用、リソース配分の調整役。" },
+  { id: "consistency", name: "公平性", domain: "exec", short: "ルールと公正さで判断する", detail: "全員に同じ基準を適用したいという感覚を持つ。明確なルールがあると公正に運用できる。活かし方：人事評価、コンプライアンス、ガバナンス、ルール設計。" },
+  { id: "discipline", name: "規律性", domain: "exec", short: "ルーティンと秩序を重視する", detail: "予測可能な構造を好み、ルールやプロセスを整えると安心して動ける。混乱した環境でも秩序を作り出せる。活かし方：オペレーション設計、品質管理、運用ルール策定。" },
+  { id: "deliberative", name: "慎重さ", domain: "exec", short: "リスクを見極めてから動く", detail: "意思決定の前に考えうるリスクを丁寧に洗い出す。早さより精度を取る。活かし方：契約・財務判断・コンプラ領域でブレーキ役を担うと組織が安定する。" },
+  { id: "responsibility", name: "責任感", domain: "exec", short: "約束を守ることに価値を置く", detail: "引き受けたことは必ず形にしたいという内的圧力を持つ。誠実さで信頼を蓄積する。活かし方：クライアントの窓口、納期コミットが重い役割。" },
+  { id: "improver", name: "回復志向", domain: "exec", short: "問題を見つけて直すのが好き", detail: "壊れているもの・うまくいっていないものに惹きつけられ、修復することにエネルギーを注げる。活かし方：トラブル対応、業務改善、火消し役。" },
+  { id: "conviction", name: "信念", domain: "exec", short: "自分の価値観に従って動く", detail: "ぶれない軸を持ち、行動に一貫性が出る。意思決定が早く、周囲に方向性を示せる。活かし方：理念ドリブンな仕事、長期的な意思決定。" },
+
+  // INFLUENCING (8)
+  { id: "activator", name: "活発性", domain: "infl", short: "動き出しが速く、巻き込む", detail: "考えるより先に始めてしまう。ゼロイチの瞬間に最大の力を発揮する。活かし方：新規企画の立ち上げ、行動の停滞を破る場面。" },
+  { id: "command", name: "指令性", domain: "infl", short: "主張し、決断する", detail: "対立を恐れず立場を明確にする。意思決定の場面で空気を変えられる。活かし方：交渉、危機対応、経営会議の論点整理。" },
+  { id: "communicator", name: "コミュニケーション", domain: "infl", short: "言葉で人を動かす", detail: "抽象的な概念を平易な言葉に落とし込み、聴き手の関心を捉えられる。活かし方：プレゼン、PR、SNS発信、社外向けピッチ。" },
+  { id: "competitor", name: "競争性", domain: "infl", short: "勝つことにこだわる", detail: "他者との比較が活力源になる。ベンチマークを置くとパフォーマンスが伸びる。活かし方：営業、コンペ、KPIゲーム化。" },
+  { id: "maximizer", name: "最上志向", domain: "infl", short: "良いものをさらに高める", detail: "平均を引き上げるより、すでに優れているものを卓越のレベルへ磨く方を好む。活かし方：トップクリエイター育成、フラッグシップ案件の品質責任者。" },
+  { id: "selfconf", name: "自己確信", domain: "infl", short: "自分の判断を信じて進める", detail: "他者の同意を待たずに進める精神的自立。重い判断を引き受けられる。活かし方：単独行動が必要な開拓、新規市場参入。" },
+  { id: "networker", name: "社交性", domain: "infl", short: "初対面の人とすぐ繋がれる", detail: "知らない人と話すことに抵抗がなく、関係構築のスピードが速い。活かし方：イベント・パートナー開拓・新規開発の入口。" },
+  { id: "significance", name: "自我", domain: "infl", short: "影響力ある存在でありたい", detail: "重要な仕事をして他者から認められたいという強い欲求を持つ。目立つ役割で力を発揮し、野心が成長を加速させる。活かし方：経営層、業界の顔、ブランド構築、専門性の確立。" },
+
+  // RELATIONSHIP BUILDING (9)
+  { id: "adapter", name: "適応性", domain: "rel", short: "変化を流れとして受け入れる", detail: "計画通りでなくても柔軟に動ける。突発的な依頼や仕様変更にも崩れない。活かし方：現場対応、運用フェーズ、不確実性の高い領域。" },
+  { id: "developer", name: "成長促進", domain: "rel", short: "人の成長を見るのが好き", detail: "他者の小さな前進を見つけ、伸ばすことに喜びを感じる。フィードバックが温かい。活かし方：マネジメント、メンタリング、新人育成。" },
+  { id: "empath", name: "共感性", domain: "rel", short: "他者の感情を察する", detail: "言葉になっていない感情を読み取る感度が高い。場の空気を保てる。活かし方：1on1、クライアントケア、チームの心理的安全性確保。" },
+  { id: "harmonizer", name: "調和性", domain: "rel", short: "対立を避け合意を作る", detail: "意見の違いを実用的な合意点にまとめる現実主義者。無駄な摩擦を減らせる。活かし方：チーム横断調整、利害関係者の取りまとめ。" },
+  { id: "includer", name: "包含", domain: "rel", short: "排除せず誰も巻き込む", detail: "輪の外にいる人を見つけ、自然に引き入れる。多様性を体現する。活かし方：チーム文化形成、コミュニティマネジメント。" },
+  { id: "individualizer", name: "個別化", domain: "rel", short: "一人ひとりの個性を見る", detail: "人をカテゴリではなく個人として捉える。適材適所の判断が秀逸。活かし方：採用、配属、インフルエンサーマッチング。" },
+  { id: "optimist", name: "ポジティブ", domain: "rel", short: "明るさで周りを元気にする", detail: "ポジティブなエネルギーをまとい、停滞ムードを変えられる。活かし方：チームの空気作り、長期プロジェクトでの士気維持。" },
+  { id: "connector", name: "親密性", domain: "rel", short: "深い信頼関係を築く", detail: "広く浅くではなく、少数と深くつながる。長期的な信用を生む。活かし方：重要顧客との関係維持、パートナーシップの長期運用。" },
+  { id: "connectedness", name: "運命思考", domain: "rel", short: "全てはつながっていると信じる", detail: "出来事や人と人のつながりに意味を見出す。視野が広く、価値観や物語の橋渡しができる。活かし方：理念設計、ストーリーテリング、長期パートナーシップ、ブランド哲学。" },
+
+  // STRATEGIC THINKING (8)
+  { id: "analyst", name: "分析思考", domain: "strat", short: "データと論理で考える", detail: "因果関係や根拠を重視し、感覚論を疑える。意思決定の精度を上げる。活かし方：レポーティング、効果測定、戦略立案の検証役。" },
+  { id: "ideator", name: "着想", domain: "strat", short: "新しいアイデアを生む", detail: "異なる要素を結びつける力が強く、企画の引き出しが多い。活かし方：キャンペーン企画、コンテンツ発想、ブレスト。" },
+  { id: "futurist", name: "未来志向", domain: "strat", short: "鮮やかな未来像で人を惹きつける", detail: "「もしこうなったら」と未来を生き生きと想像し、その像にエネルギーをもらう。語ることで周囲も惹きつけられる。活かし方：事業ピッチ、ロードマップ、ビジョン共有、ブランド構想。" },
+  { id: "collector", name: "収集心", domain: "strat", short: "目的なく集めることが好き", detail: "使うアテがなくても情報・モノ・知識を集めずにはいられない。「いつか役立つかも」が引き出しを広げる。活かし方：競合調査、トレンドリサーチ、企画の素材出し、ナレッジ整備。" },
+  { id: "reflector", name: "内省", domain: "strat", short: "一人で考える時間が必要", detail: "思考を深めるための静寂を求める。考え抜いた答えに重みがある。活かし方：戦略文書執筆、難題のフレーミング。" },
+  { id: "learner", name: "学習欲", domain: "strat", short: "学ぶ過程そのものが報酬", detail: "結果よりも、新しいことを学んでいる「途中」が一番楽しい。マスターすると次のテーマへ移りたくなる。活かし方：新領域開拓、変化の早い分野（AI、SNS新機能）、リスキリング推進。" },
+  { id: "strategist", name: "戦略性", domain: "strat", short: "パターンと最適経路を見る", detail: "選択肢を瞬時に並べ、不要な道を切り捨てる思考。最短経路を見つける。活かし方：意思決定支援、優先順位付け、リソース配分。" },
+  { id: "context", name: "原点思考", domain: "strat", short: "過去を辿って現在を理解する", detail: "物事の背景や歴史を探ることで、現在の状況の本質を把握する。判断にコンテキストを与える役割。活かし方：戦略立案の前提整理、組織文化理解、競合の歴史分析、意思決定の背景説明。" },
+];
+
+const DOMAINS = {
+  exec:  { label: "実行力",         color: "#6e3996" },
+  infl:  { label: "影響力",         color: "#d97e1e" },
+  rel:   { label: "人間関係構築力", color: "#1c75b8" },
+  strat: { label: "戦略的思考力",   color: "#1f8755" },
+};
+
+// ============================================================
+// 170 questions — 5 per theme
+// ============================================================
+const QUESTIONS = [
+  // EXECUTING
+  { t: "achiever", q: "毎日「今日も何かを成し遂げた」と感じられないと落ち着かない" },
+  { t: "achiever", q: "ToDoリストを片付けることに強い満足感を覚える" },
+  { t: "achiever", q: "忙しく働いている状態の方がエネルギーが湧いてくる" },
+  { t: "achiever", q: "何もしない休日があると、かえって落ち着かない" },
+  { t: "achiever", q: "一日の終わりに「今日は何を成し遂げたか」を振り返る習慣がある" },
+
+  { t: "planner", q: "一度「これ」と決めた目標があると、それ以外の選択肢は全部捨てられる" },
+  { t: "planner", q: "複数のことを同時に追うのは苦手で、一つのゴールに絞ったほうが力が出る" },
+  { t: "planner", q: "脱線・寄り道・関係ない話に強くイライラする" },
+  { t: "planner", q: "「目的は何か？」を絶えず自問しており、目的のない行動には乗らない" },
+  { t: "planner", q: "迷ったときの判断軸は「ゴールに近づくか／遠ざかるか」だけだ" },
+
+  { t: "arranger", q: "複数のタスクや人を同時に動かして調整するのが得意だ" },
+  { t: "arranger", q: "状況に応じて段取りを組み替えられる柔軟性に自信がある" },
+  { t: "arranger", q: "一度に多くの要素を扱う方が、シングルタスクより力が出る" },
+  { t: "arranger", q: "複雑なパズルのような状況を整理することに快感を覚える" },
+  { t: "arranger", q: "「もっと良い組み合わせがある」と感じると配置を変えたくなる" },
+
+  { t: "consistency", q: "ルールが明確で全員に同じ基準が適用される状況が好きだ" },
+  { t: "consistency", q: "「えこひいき」や個別対応が増えると不快に感じる" },
+  { t: "consistency", q: "公正さや一貫性を保つことに価値を置く" },
+  { t: "consistency", q: "例外を作ることに強い違和感を覚える" },
+  { t: "consistency", q: "自分の判断に「他の人にも同じ基準を使えるか？」を問う" },
+
+  { t: "discipline", q: "混沌とした状況を見ると、自然と「秩序を作って整えたい」衝動が湧く" },
+  { t: "discipline", q: "毎日のルーティンを厳密に守ることで、心が安定する" },
+  { t: "discipline", q: "ToDoリスト・スケジュール表・チェックリストなしでは仕事ができない" },
+  { t: "discipline", q: "デスクの上・PCのフォルダ・部屋がいつも整理整頓されている" },
+  { t: "discipline", q: "予定が崩れることに対して、強い不快感を覚える" },
+
+  { t: "deliberative", q: "意思決定の前に、起こりうるリスクを洗い出すタイプだ" },
+  { t: "deliberative", q: "勢いで決めるより、慎重に検討して進めたい" },
+  { t: "deliberative", q: "他人の決断にも「本当に大丈夫か」と確認したくなる" },
+  { t: "deliberative", q: "「とりあえずやってみる」より「ちゃんと検討してから」が信条だ" },
+  { t: "deliberative", q: "楽観的すぎる計画には反射的に警戒する" },
+
+  { t: "responsibility", q: "一度約束したことは、何があっても守りたいと思う" },
+  { t: "responsibility", q: "「この人に任せれば大丈夫」と言われることが多い" },
+  { t: "responsibility", q: "期限を守れないことに強いストレスを感じる" },
+  { t: "responsibility", q: "自分の名前で出す仕事に妥協できない" },
+  { t: "responsibility", q: "引き受けた仕事を終わらせるまで、心から休めない" },
+
+  { t: "improver", q: "壊れているものや問題を見つけると、直したくなる" },
+  { t: "improver", q: "改善できる余地があるプロセスを見ると放っておけない" },
+  { t: "improver", q: "トラブル対応や火消しに呼ばれることが多い" },
+  { t: "improver", q: "機能しなくなったものを修復することに喜びを感じる" },
+  { t: "improver", q: "「壊れている → 直す」プロセスにエネルギーが湧く" },
+
+  { t: "conviction", q: "お金や地位より、社会貢献・奉仕・公共の役に立つことに惹かれる" },
+  { t: "conviction", q: "「自分は何のために生きているのか」という問いに、自分なりの答えを持っている" },
+  { t: "conviction", q: "倫理・道徳・スピリチュアルな価値観が、日々の意思決定に強く影響する" },
+  { t: "conviction", q: "高給だが意義を感じない仕事より、低収入でも意義ある仕事を選ぶ" },
+  { t: "conviction", q: "家族・コミュニティ・信仰など、自分より大きな存在に奉仕することを大切にしている" },
+
+  // INFLUENCING
+  { t: "activator", q: "考えるより先に動いてしまうことが多い" },
+  { t: "activator", q: "アイデアが出たら、まず試してから精度を上げたい派だ" },
+  { t: "activator", q: "停滞した会議の空気を変える役割をしがちだ" },
+  { t: "activator", q: "「準備が万端」を待つより、不完全でも始めたい" },
+  { t: "activator", q: "動き始めると、周囲のエネルギーが上がるのを感じる" },
+
+  { t: "command", q: "意見の対立があっても、自分の立場をはっきり言える" },
+  { t: "command", q: "決断が必要な場面で、率先して判断を引き受けることが多い" },
+  { t: "command", q: "強く主張することへの心理的抵抗が少ない" },
+  { t: "command", q: "場の主導権を握ることに自然と惹かれる" },
+  { t: "command", q: "「言いにくいこと」を率先して言えるタイプだ" },
+
+  { t: "communicator", q: "難しい話を、わかりやすい言葉に翻訳するのが得意だ" },
+  { t: "communicator", q: "プレゼンや人前で話す機会を、苦にせず楽しめる" },
+  { t: "communicator", q: "適切な言葉や比喩を選ぶことに自信がある" },
+  { t: "communicator", q: "自分の考えを言葉にするプロセス自体が好きだ" },
+  { t: "communicator", q: "物語やエピソードで人を惹きつけるのが得意だ" },
+
+  { t: "competitor", q: "明確な対戦相手がいる場面でしか、本気のスイッチが入らない" },
+  { t: "competitor", q: "自己ベスト更新より、他者を「打ち負かす」ことの方に強い快感を覚える" },
+  { t: "competitor", q: "勝てない勝負には興味が湧かず、参加すらしたくない" },
+  { t: "competitor", q: "2位は「敗北」であり、1位以外に意味を感じない" },
+  { t: "competitor", q: "ライバルの存在が、自分の実力を引き出す最大の燃料だ" },
+
+  { t: "maximizer", q: "60点を80点にするより、85点を100点にする方に魅力を感じる" },
+  { t: "maximizer", q: "苦手を補うより、得意を磨く時間を優先したい" },
+  { t: "maximizer", q: "中途半端なクオリティで世に出すことに抵抗がある" },
+  { t: "maximizer", q: "「平均」「並」のレベルにとどまるのは耐えられない" },
+  { t: "maximizer", q: "すでに上手な人をさらに突き抜けさせる方が燃える" },
+
+  { t: "selfconf", q: "自分の判断にあまり迷いがない" },
+  { t: "selfconf", q: "他人の同意がなくても自分の考えで進められる" },
+  { t: "selfconf", q: "重い責任のある決断を引き受けることに抵抗がない" },
+  { t: "selfconf", q: "「自分は正しい方向に進んでいる」という内的確信がある" },
+  { t: "selfconf", q: "不確実な状況でも自分の判断で前進できる" },
+
+  { t: "networker", q: "初対面の人と話すことが苦にならない" },
+  { t: "networker", q: "知り合いの数を増やすこと自体が楽しい" },
+  { t: "networker", q: "イベントや交流会で人と関係を作るのが得意だ" },
+  { t: "networker", q: "知らない人に話しかけることに抵抗が少ない" },
+  { t: "networker", q: "大勢の人がいる場で疲れずにエネルギーが上がる" },
+
+  { t: "significance", q: "自分の仕事が広く知られて評価されることを目指したい" },
+  { t: "significance", q: "「重要な役割」に惹かれる" },
+  { t: "significance", q: "影響力ある立場で動いている時に最も力が出る" },
+  { t: "significance", q: "「すごい」「有名」と評価される仕事に惹かれる" },
+  { t: "significance", q: "凡庸な役割より、目立つポジションを取りたい" },
+
+  // RELATIONSHIP BUILDING
+  { t: "adapter", q: "1ヶ月先・1年先のことを考えるより、「今日・今この瞬間」に意識が向きがち" },
+  { t: "adapter", q: "長期計画を立てても、その通りに動こうとはあまり思わない" },
+  { t: "adapter", q: "予定が直前に変わっても、ほとんどストレスを感じない" },
+  { t: "adapter", q: "未来は予測できないものなので、その時その時で柔軟に対応する方が現実的だ" },
+  { t: "adapter", q: "「今日は何が起きるかわからない」という状態に、むしろ生きている実感を得る" },
+
+  { t: "developer", q: "他人の小さな成長や前進に気づくのが好きだ" },
+  { t: "developer", q: "後輩や部下の育成に時間を使うことに喜びを感じる" },
+  { t: "developer", q: "「あの人を伸ばした」と言われると嬉しい" },
+  { t: "developer", q: "他人の可能性を見つけるのが得意だ" },
+  { t: "developer", q: "「できなかったこと」が「できる」になる瞬間に立ち会いたい" },
+
+  { t: "empath", q: "相手が口に出す前に、感情の変化に気づくことが多い" },
+  { t: "empath", q: "他人の気分に自分の気持ちが影響されやすい" },
+  { t: "empath", q: "場の空気や温度感の変化に敏感だと言われる" },
+  { t: "empath", q: "言葉になっていない相手の気持ちを察する自信がある" },
+  { t: "empath", q: "他人の喜びや悲しみを自分のことのように感じる" },
+
+  { t: "harmonizer", q: "意見が割れた時、合意点を探すことに自然と動く" },
+  { t: "harmonizer", q: "無用な対立や摩擦は避けたいと思う" },
+  { t: "harmonizer", q: "現実的な落とし所を見つけるのが得意だ" },
+  { t: "harmonizer", q: "議論が紛糾している場で「実用的な合意」を提示できる" },
+  { t: "harmonizer", q: "表立った対立に巻き込まれるとパフォーマンスが落ちる" },
+
+  { t: "includer", q: "輪の外にいる人を見ると、自然と声をかけたくなる" },
+  { t: "includer", q: "誰かが取り残されている状況を見過ごせない" },
+  { t: "includer", q: "多様な背景の人と一緒に働ける方が心地よい" },
+  { t: "includer", q: "排除や仲間外れを見ると居心地が悪くなる" },
+  { t: "includer", q: "「全員が参加できているか」を自然と気にする" },
+
+  { t: "individualizer", q: "「平均的な人」というものは存在せず、一人ひとり全く違う独自の存在だと感じる" },
+  { t: "individualizer", q: "知人の固有のクセ・習慣・好みを驚くほど細かく覚えている" },
+  { t: "individualizer", q: "相手によって接し方・言葉遣い・距離感を本能的に切り替える" },
+  { t: "individualizer", q: "「みんな同じように扱う」公平な制度より、一人ひとりに合わせた対応を好む" },
+  { t: "individualizer", q: "ステレオタイプ・血液型診断・MBTIで人を分類することに反発を感じる" },
+
+  { t: "optimist", q: "前向きさや明るさで、場の空気を変えられる" },
+  { t: "optimist", q: "悪いニュースの中にも良い面を見つけようとする" },
+  { t: "optimist", q: "周囲から「一緒にいると元気になる」と言われる" },
+  { t: "optimist", q: "楽しい雰囲気を意識的に作るのが得意だ" },
+  { t: "optimist", q: "どんな状況でも明るい側面を見つける癖がある" },
+
+  { t: "connector", q: "同じ少数の人と長く深く関わり続けることが、何より満たされる" },
+  { t: "connector", q: "新しい人と知り合うより、既にいる親友・家族との関係を深めたい" },
+  { t: "connector", q: "親しい少数の相手のためなら、惜しみなく時間や労力をかけられる" },
+  { t: "connector", q: "10年以上続いている深い人間関係が、自分にとって最大の資産だ" },
+  { t: "connector", q: "「広く浅く」付き合うことに、本能的に違和感を覚える" },
+
+  { t: "connectedness", q: "偶然の出会いや出来事にも意味があると感じる" },
+  { t: "connectedness", q: "全ては何らかの形でつながっていると思う" },
+  { t: "connectedness", q: "物事の背後にある大きな流れや意味に惹かれる" },
+  { t: "connectedness", q: "一見無関係に見える出来事の間にもつながりを見出す" },
+  { t: "connectedness", q: "物事には目に見えない意味や役割があると信じている" },
+
+  // STRATEGIC THINKING
+  { t: "analyst", q: "「なんとなく」より、データや根拠で判断したい" },
+  { t: "analyst", q: "因果関係や前提を疑う癖がある" },
+  { t: "analyst", q: "感覚論で進む議論にもやもやすることがある" },
+  { t: "analyst", q: "主張の根拠を求めずにはいられない" },
+  { t: "analyst", q: "仮説を立てて検証することが思考の基本だ" },
+
+  { t: "ideator", q: "ブレストでアイデアを出すのが得意だ" },
+  { t: "ideator", q: "一見関係ない要素を結びつけて新しい発想を作れる" },
+  { t: "ideator", q: "「面白いアイデアだね」と言われることが多い" },
+  { t: "ideator", q: "突然ひらめくアイデアに自分でも驚くことがある" },
+  { t: "ideator", q: "既存のフレームを壊すような発想に魅力を感じる" },
+
+  { t: "futurist", q: "ふと「もし○○だったらどうなるだろう」と未来を想像することが多い" },
+  { t: "futurist", q: "鮮やかに描く未来像に自分自身がワクワクする" },
+  { t: "futurist", q: "退屈な現状より、これから起きうる可能性を考えるほうが楽しい" },
+  { t: "futurist", q: "未来のビジョンを語ると、人がついてくると感じる" },
+  { t: "futurist", q: "「数年後・数十年後にはこうなっている」と確信を持って語れる像が見える" },
+
+  { t: "collector", q: "捨てるべきと頭で分かっていても「もったいない」と感じて溜め込んでしまう" },
+  { t: "collector", q: "関連性のないテーマでも、興味が湧いたものは片っ端から手を出してしまう" },
+  { t: "collector", q: "コレクションや蓄積に対して「これで十分」という満足点・上限がない" },
+  { t: "collector", q: "役立つ見込みが薄い情報・モノでも「いつか使うかも」と思って残してしまう" },
+  { t: "collector", q: "部屋・PCのフォルダ・ブックマークが整理されないまま膨れ上がる傾向がある" },
+
+  { t: "reflector", q: "頭の中で常に何かを考えており、思考が止まる瞬間がほとんどない" },
+  { t: "reflector", q: "抽象的な概念や哲学的なテーマについて考えること自体が純粋に楽しい" },
+  { t: "reflector", q: "結論を出すためではなく、ただ「考えること」そのものに時間を使う" },
+  { t: "reflector", q: "「考える」という行為自体から、知的な快感や満足を得られる" },
+  { t: "reflector", q: "一人で長時間思考に没頭することが、最高のリフレッシュになる" },
+
+  { t: "learner", q: "何かを学んでいる「途中」が一番ワクワクする" },
+  { t: "learner", q: "業務に関係なくても、面白そうな分野には自然と手を出してしまう" },
+  { t: "learner", q: "自分が成長していると実感できる時に最もエネルギーが湧く" },
+  { t: "learner", q: "新しいスキルを獲得していく過程そのものが快感だ" },
+  { t: "learner", q: "マスターしたら次のテーマへ移りたくなる" },
+
+  { t: "strategist", q: "選択肢を比較して最短ルートを見つけるのが得意だ" },
+  { t: "strategist", q: "「もしAなら、Bになって、Cになる」と先まで考える癖がある" },
+  { t: "strategist", q: "無駄な選択肢をスパッと切り捨てられる" },
+  { t: "strategist", q: "パターンが見えると判断が速くなる" },
+  { t: "strategist", q: "「他のやり方ならどうか？」を瞬時に並べられる" },
+
+  { t: "context", q: "物事を理解するために、その背景や歴史を知りたくなる" },
+  { t: "context", q: "「なぜそうなったか」の経緯を辿るのが好きだ" },
+  { t: "context", q: "過去のパターンから現在の判断材料を引き出すことが得意だ" },
+  { t: "context", q: "「これはいつ・誰が・なぜ始めたのか」を知りたくなる" },
+  { t: "context", q: "過去を踏まえないと「今」を理解できない感覚がある" },
+];
+
+// ============================================================
+// State & persistence
+// ============================================================
+// ============================================================
+// Generate ipsative pairs from QUESTIONS pool
+//   - target: ~150 pairs (each theme appears ~9 times)
+//   - 70% intra-domain pairs (same domain, harder to discriminate
+//     → more informative for true rank)
+//   - 30% cross-domain pairs (sanity check: clearly different concepts)
+//   - balance: greedy by theme usage + intra/cross ratio
+// ============================================================
+function generatePairs(target = 150, intraRatio = 0.7) {
+  const themeIds = THEMES.map(t => t.id);
+  const themeByDomain = {};
+  Object.keys(DOMAINS).forEach(d => themeByDomain[d] = THEMES.filter(t => t.domain === d).map(t => t.id));
+  const domainOf = {};
+  THEMES.forEach(t => domainOf[t.id] = t.domain);
+  const themeUsage = {};
+  themeIds.forEach(t => themeUsage[t] = 0);
+  const stmtUsage = new Array(QUESTIONS.length).fill(0);
+  const stmtsByTheme = {};
+  themeIds.forEach(t => {
+    stmtsByTheme[t] = [];
+    QUESTIONS.forEach((q, idx) => { if (q.t === t) stmtsByTheme[t].push(idx); });
+  });
+  const pairKey = (a, b) => [a, b].sort().join("|");
+  const usedKeys = new Set();
+  const pairs = [];
+
+  function pickPair(intraOnly) {
+    // Sort themes by usage (least used first), tie-break by id for determinism
+    const sorted = [...themeIds].sort((a, b) =>
+      themeUsage[a] - themeUsage[b] || a.localeCompare(b)
+    );
+    for (const themeA of sorted) {
+      const candidates = sorted.filter(c => {
+        if (c === themeA) return false;
+        if (usedKeys.has(pairKey(themeA, c))) return false;
+        if (intraOnly && domainOf[c] !== domainOf[themeA]) return false;
+        if (!intraOnly && domainOf[c] === domainOf[themeA]) return false;
+        return true;
+      });
+      if (candidates.length > 0) {
+        return { themeA, themeB: candidates[0] };
+      }
+    }
+    return null;
+  }
+
+  let safety = 0;
+  while (pairs.length < target && safety < target * 50) {
+    safety++;
+    // Decide intra vs cross to maintain target ratio
+    const currentIntra = pairs.filter(p => domainOf[p.aTheme] === domainOf[p.bTheme]).length;
+    const wantIntra = (currentIntra / Math.max(1, pairs.length + 1)) < intraRatio;
+    let pick = pickPair(wantIntra);
+    if (!pick) pick = pickPair(!wantIntra); // fallback
+    if (!pick) break;
+    const { themeA, themeB } = pick;
+    usedKeys.add(pairKey(themeA, themeB));
+    const stmtsA = [...stmtsByTheme[themeA]].sort((a, b) => stmtUsage[a] - stmtUsage[b]);
+    const stmtsB = [...stmtsByTheme[themeB]].sort((a, b) => stmtUsage[a] - stmtUsage[b]);
+    const aIdx = stmtsA[0];
+    const bIdx = stmtsB[0];
+    pairs.push({ aIdx, bIdx, aTheme: themeA, bTheme: themeB });
+    stmtUsage[aIdx]++;
+    stmtUsage[bIdx]++;
+    themeUsage[themeA]++;
+    themeUsage[themeB]++;
+  }
+  return pairs;
+}
+const PAIRS = generatePairs(150, 0.55);
+
+const TOOL_VERSION = "v11";
+const STORAGE_KEY = "stunpiece_strengths_v11";
+
+// ============================================================
+// 4脳分類 (Four Brain Classification)
+//   - 4 brain types × intro/extro × yin/yang = 16 base types
+// ============================================================
+const BRAINS = {
+  dominator: { name: "支配者", brain: "爬虫類脳", color: "#c14545", desc: "勝利と成果志向", detail: "「生き残り・勝敗・損得」を最優先する。即断即決、ゴール志向、競争で輝く。リーダーシップと結果へのこだわりが武器。" },
+  player:    { name: "遊戯者", brain: "哺乳類脳", color: "#e88e2e", desc: "情緒と人間関係志向", detail: "「愛情・絆・人とのつながり」を最優先する。誠実で「いい人」、人を大事にし、情緒で結ばれる関係性を作る。共感力と人間味が武器。" },
+  observer:  { name: "観察者", brain: "大脳理性",   color: "#1c75b8", desc: "論理と分析志向", detail: "「情報・論理・冷静さ」を最優先する。距離をとって状況を観察し、データで判断する。分析・戦略立案で輝く。" },
+  seeker:    { name: "求道者", brain: "人間脳・抽象", color: "#7a3e9b", desc: "理想と価値志向", detail: "「理想・価値観・本質」を最優先する。意義のあることに人生をかけ、抽象的な世界観を持つ。創造とビジョンが武器。" },
+};
+
+const BRAIN_PAIRS = [
+  // dominator vs player — player を「人間関係・情緒・誠実」軸で再定義
+  { aBrain: "dominator", bBrain: "player", aQ: "勝負に勝って成果を上げることが、何より自分を満たす", bQ: "大切な人と心を通わせる時間が、何より自分を満たす" },
+  { aBrain: "dominator", bBrain: "player", aQ: "成果が伴わない努力には意味を感じない", bQ: "結果が出なくても、人とのつながりがあれば満足できる" },
+  { aBrain: "dominator", bBrain: "player", aQ: "損得・有利不利を瞬時に計算する癖がある", bQ: "「人から好かれているか・大事にされているか」を直感で察する癖がある" },
+  { aBrain: "dominator", bBrain: "player", aQ: "ライバルと競い合う場面で一番燃える", bQ: "仲間や家族を大事にする場面で一番自分らしくいられる" },
+  { aBrain: "dominator", bBrain: "player", aQ: "「強い人・成果を出す人」が世の本質だと思う", bQ: "「優しい人・誠実な人」が世の本質だと思う" },
+  // dominator vs observer
+  { aBrain: "dominator", bBrain: "observer", aQ: "勢いと決断力で道を切り開いていく", bQ: "冷静な分析と情報で道を選んでいく" },
+  { aBrain: "dominator", bBrain: "observer", aQ: "とにかく行動して結果を出すタイプだ", bQ: "まず観察して状況を見極めるタイプだ" },
+  { aBrain: "dominator", bBrain: "observer", aQ: "直感とスピードで判断する", bQ: "根拠とデータで丁寧に判断する" },
+  { aBrain: "dominator", bBrain: "observer", aQ: "群れの先頭に立って引っ張る側だ", bQ: "一歩引いて全体を観察する側だ" },
+  { aBrain: "dominator", bBrain: "observer", aQ: "失敗してもまず動く方が良い", bQ: "失敗しないよう、考え抜いてから動く方が良い" },
+  // dominator vs seeker
+  { aBrain: "dominator", bBrain: "seeker", aQ: "「勝てるか・勝てないか」が判断軸だ", bQ: "「正しいか・正しくないか」が判断軸だ" },
+  { aBrain: "dominator", bBrain: "seeker", aQ: "結果を出す現実的な道を選ぶ", bQ: "理想に向かう本質的な道を選ぶ" },
+  { aBrain: "dominator", bBrain: "seeker", aQ: "損得勘定で動いている自覚がある", bQ: "価値観・信念で動いている自覚がある" },
+  { aBrain: "dominator", bBrain: "seeker", aQ: "「やれば勝てる」が自分の信条だ", bQ: "「やる意味がある」が自分の信条だ" },
+  { aBrain: "dominator", bBrain: "seeker", aQ: "短期的な勝利を積み重ねたい", bQ: "長期的な意義を追い求めたい" },
+  // player vs observer — 「賑やか/静か」「一人/みんな」は内外向に依存するので除外
+  { aBrain: "player", bBrain: "observer", aQ: "感情やつながりに敏感に反応する", bQ: "論理や事実に敏感に反応する" },
+  { aBrain: "player", bBrain: "observer", aQ: "人の気持ちに寄り添って動くタイプだ", bQ: "状況を冷静に観察して動くタイプだ" },
+  { aBrain: "player", bBrain: "observer", aQ: "「誰かを大事にしたい」が判断軸だ", bQ: "「事実を正確に把握したい」が判断軸だ" },
+  { aBrain: "player", bBrain: "observer", aQ: "相手の感情に共鳴して巻き込まれる方が多い", bQ: "相手の感情とは距離をとって観察する方が多い" },
+  { aBrain: "player", bBrain: "observer", aQ: "「人とのつながり・絆」を最も重視する", bQ: "「客観的な情報・分析」を最も重視する" },
+  // player vs seeker — playerを「いまの愛情・関係性・優しさ」、seekerを「長期理想・信念・本質」に
+  { aBrain: "player", bBrain: "seeker", aQ: "いまの人間関係・愛情を最優先したい", bQ: "長期の理想・使命を最優先したい" },
+  { aBrain: "player", bBrain: "seeker", aQ: "周りの人を大事にして優しく動くタイプだ", bQ: "自分の信念を貫いて時には厳しく動くタイプだ" },
+  { aBrain: "player", bBrain: "seeker", aQ: "「人に優しく・調和」が自分の信条だ", bQ: "「自分の理想を貫く」が自分の信条だ" },
+  { aBrain: "player", bBrain: "seeker", aQ: "大切な人と過ごす瞬間に生きている実感を覚える", bQ: "意義のあることをしている瞬間に生きている実感を覚える" },
+  { aBrain: "player", bBrain: "seeker", aQ: "「いい人」「優しい人」と言われたい", bQ: "「信念のある人」「本質を見抜く人」と言われたい" },
+  // observer vs seeker
+  { aBrain: "observer", bBrain: "seeker", aQ: "論理が判断の中心軸だ", bQ: "価値観が判断の中心軸だ" },
+  { aBrain: "observer", bBrain: "seeker", aQ: "「正確に把握する」を優先する", bQ: "「正しく実現する」を優先する" },
+  { aBrain: "observer", bBrain: "seeker", aQ: "距離をとって冷静に物事を見る", bQ: "没入して理想を追いかける" },
+  { aBrain: "observer", bBrain: "seeker", aQ: "客観的な事実を集めることに価値を置く", bQ: "主観的な信念を貫くことに価値を置く" },
+  { aBrain: "observer", bBrain: "seeker", aQ: "中立な立場で観察するのが好きだ", bQ: "はっきりした立場を取って表明するのが好きだ" },
+];
+
+const IO_QUESTIONS = [
+  { polarity: "intro", q: "大勢の前で話すより、少人数で深く話す方がエネルギーが湧く" },
+  { polarity: "intro", q: "一人で過ごす時間がないと回復できない" },
+  { polarity: "extro", q: "知らない人だらけの場でもエネルギーが落ちない" },
+  { polarity: "extro", q: "自分の考えは口に出して整理するタイプだ" },
+  { polarity: "extro", q: "パーティーや交流会で疲れず楽しめる" },
+  { polarity: "intro", q: "静かに本を読んだり一人で考えたりする時間が一番好きだ" },
+  { polarity: "extro", q: "集団の中で目立つことに抵抗がない" },
+  { polarity: "intro", q: "数人の親しい仲間と過ごすのが一番落ち着く" },
+];
+
+// ============================================================
+// 統合アーキタイプ（4脳 × SF支配領域 = 16パターン）
+// ============================================================
+const INTEGRATED_ARCHETYPES = {
+  // 支配者 (爬虫類脳・勝敗志向)
+  dominator_exec:  { name: "実行型キャプテン",   tag: "勝ちにこだわり、現場最前線で結果を出し続ける指揮官タイプ。決断力と推進力で組織を引っ張る。" },
+  dominator_infl:  { name: "征服者リーダー",     tag: "競争心と影響力を武器に、組織を引っ張り市場で勝利を取りにいく王道リーダー。" },
+  dominator_rel:   { name: "情熱型リーダー",     tag: "勝ちと人間関係の両輪で、熱量と仲間意識で人を巻き込み引っ張るタイプ。" },
+  dominator_strat: { name: "戦略的征服者",       tag: "戦略眼で勝ち筋を見つけ、計画的に勝ちを取りにいく頭脳派の指揮官。" },
+  // 遊戯者 (哺乳類脳・情緒志向)
+  player_exec:     { name: "実直型サポーター",   tag: "誠実さと信頼関係で、組織を底から支える縁の下の力持ち。約束は必ず守る安心感。" },
+  player_infl:     { name: "共感型リーダー",     tag: "感情と信頼で人を動かす、温かく包み込むようなリーダーシップ。" },
+  player_rel:      { name: "ハーモニー職人",     tag: "人間関係の中心で、調和を作り信頼の網を編むタイプ。チームの心臓部。" },
+  player_strat:    { name: "人間派ストラテジスト", tag: "人と関係性の視点を持った温かい戦略家。組織の機微を読んで戦略を立てる。" },
+  // 観察者 (大脳理性・論理志向)
+  observer_exec:   { name: "冷静な実行者",       tag: "論理的判断と着実な実行で、間違いなく成果を出す堅実派。品質と精度の番人。" },
+  observer_infl:   { name: "分析的アドバイザー", tag: "論理と情報で人を動かす、コンサル型のリーダー。説得力ある提案で意思決定を変える。" },
+  observer_rel:    { name: "観察的サポーター",   tag: "冷静な分析で人を支え、距離感を保ちながら信頼を築く落ち着いた支援者。" },
+  observer_strat:  { name: "静謐な戦略家",       tag: "距離をとって冷静に分析し、論理的に最適解を導く参謀。深い思考と知的鋭さが武器。" },
+  // 求道者 (人間脳・抽象/価値志向)
+  seeker_exec:     { name: "使命型実行者",       tag: "信念に従って、価値あるものを形にする実行家。意義のある仕事に妥協なし。" },
+  seeker_infl:     { name: "ビジョナリー",       tag: "価値観と未来像で人を動かす、新規事業や創業に向く構想型リーダー。" },
+  seeker_rel:      { name: "価値観型リーダー",   tag: "共通の信念でチームを作る、理念主導のリーダー。長期の絆と共通ビジョンを重視。" },
+  seeker_strat:    { name: "思想家・哲学者",     tag: "抽象と本質を追求する、創造性とビジョンの源泉。深い思索で世界観を作る。" },
+};
+
+// ============================================================
+// 4脳タイプ別フィット環境
+// ============================================================
+const BRAIN_FIT = {
+  dominator: {
+    fitJobs: ["営業職トップ", "経営層", "プロジェクトリーダー", "起業家", "アスリート"],
+    fitEnv:  ["明確な勝敗・KPIがある環境", "競争相手がいる場面", "決断と実行が求められる役割"],
+    avoid:   ["勝敗の見えない曖昧な環境", "コンセンサス重視の協調型組織", "ルーティン作業中心の役割"],
+  },
+  player: {
+    fitJobs: ["人事・HR", "カウンセラー", "教育・コーチ", "看護・ケア職", "コミュニティマネージャー"],
+    fitEnv:  ["チームワーク中心", "1on1で深く関わる仕事", "情緒的サポートが価値を持つ場面"],
+    avoid:   ["数字だけで評価される競争環境", "孤立した一人作業", "対立的・冷淡な組織文化"],
+  },
+  observer: {
+    fitJobs: ["研究職", "戦略コンサル", "アナリスト", "エンジニア", "投資家・トレーダー"],
+    fitEnv:  ["一人で深く考える時間がある環境", "論理と情報が重視される場", "リモート・専門職"],
+    avoid:   ["即断即決の現場対応", "感情的な調整が多い役割", "強い同調圧力のある集団行動"],
+  },
+  seeker: {
+    fitJobs: ["クリエイター", "起業家", "ブランドマネージャー", "ビジョナリー職", "アーティスト"],
+    fitEnv:  ["理想・価値観が重視される組織", "創造性が求められる場", "長期ビジョンを描ける役割"],
+    avoid:   ["近視眼的な数字追求", "意義の感じられないルーチン", "価値観の合わない組織"],
+  },
+};
+
+// ============================================================
+// 4脳 × SF資質 のアフィニティ
+//   aligned: 4脳タイプと自然に共鳴する資質（シナジー候補）
+//   unexpected: 4脳タイプと意外な組合せの資質（ギャップ候補）
+// ============================================================
+const BRAIN_SF_AFFINITY = {
+  dominator: {
+    aligned:    ["competitor", "command", "achiever", "selfconf", "maximizer", "activator", "significance", "improver"],
+    unexpected: ["empath", "harmonizer", "includer", "connector", "developer", "connectedness"],
+  },
+  player: {
+    aligned:    ["empath", "harmonizer", "includer", "connector", "developer", "individualizer", "optimist", "communicator", "connectedness"],
+    unexpected: ["competitor", "command", "deliberative", "analyst", "consistency"],
+  },
+  observer: {
+    aligned:    ["analyst", "strategist", "reflector", "context", "deliberative", "ideator", "learner", "futurist", "collector"],
+    unexpected: ["activator", "networker", "command", "empath", "optimist"],
+  },
+  seeker: {
+    aligned:    ["futurist", "ideator", "conviction", "context", "connectedness", "significance", "individualizer", "learner"],
+    unexpected: ["consistency", "achiever", "competitor", "discipline"],
+  },
+};
+
+const YY_QUESTIONS = [
+  { polarity: "yang", q: "自分から動いて主導権を取りに行くタイプだ" },
+  { polarity: "yin",  q: "受け止め役・支え役の方が自分には向いている" },
+  { polarity: "yang", q: "表現は直接的・断定的だ" },
+  { polarity: "yin",  q: "控えめ・繊細で、グラデーションのある表現を好む" },
+  { polarity: "yang", q: "自分の存在感や影響力を示したい" },
+  { polarity: "yin",  q: "目立たず静かに役割を果たしたい" },
+  { polarity: "yang", q: "強い・速い・大きいものに惹かれる" },
+  { polarity: "yin",  q: "柔らかい・ゆっくり・繊細なものに惹かれる" },
+];
+
+let state = {
+  user: { name: "", team: "" },
+  mode: "both",         // "both" | "sf_only" | "brain_only"
+  answers: {},          // SF answers (pair index 0..PAIRS.length-1 → 1..5)
+  cursor: 0,            // SF cursor
+  brainAnswers: {},     // Brain answers (combined index 0..45 → 1..5)
+  brainCursor: 0,       // Brain cursor (within brain phase, 0..45)
+  phase: "sf",          // "sf" | "brain" | "done"
+  startedAt: null,
+};
+
+function getTotalQuestions(mode) {
+  if (mode === "sf_only") return PAIRS.length;
+  if (mode === "brain_only") return BRAIN_TOTAL;
+  return PAIRS.length + BRAIN_TOTAL;
+}
+function initialPhase(mode) {
+  return mode === "brain_only" ? "brain" : "sf";
+}
+
+const BRAIN_TOTAL = BRAIN_PAIRS.length + IO_QUESTIONS.length + YY_QUESTIONS.length; // 46
+const TOTAL_QUESTIONS = 0; // computed below
+const _t = () => PAIRS.length + BRAIN_TOTAL;
+
+function saveState() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {} }
+function loadState() { try { const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; } catch (e) { return null; } }
+function clearState() { try { localStorage.removeItem(STORAGE_KEY); } catch(e) {} }
+
+// ============================================================
+// Screens
+// ============================================================
+const $ = (id) => document.getElementById(id);
+const screens = ["intro", "quiz", "results"];
+function show(name) {
+  screens.forEach(s => $("screen-" + s).classList.toggle("hidden", s !== name));
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// Intro
+let selectedMode = "both";
+function initIntro() {
+  // Mode card selection
+  document.querySelectorAll(".mode-card").forEach(card => {
+    card.addEventListener("click", () => {
+      document.querySelectorAll(".mode-card").forEach(c => c.classList.remove("selected"));
+      card.classList.add("selected");
+      selectedMode = card.dataset.mode;
+    });
+  });
+
+  const saved = loadState();
+  const total = saved ? getTotalQuestions(saved.mode || "both") : 0;
+  let progress = 0;
+  if (saved) {
+    progress = Object.keys(saved.answers || {}).length + Object.keys(saved.brainAnswers || {}).length;
+  }
+  if (saved && progress > 0 && saved.phase !== "done") {
+    $("btnResume").style.display = "inline-flex";
+    const modeLabel = saved.mode === "sf_only" ? "SFのみ" : saved.mode === "brain_only" ? "4脳のみ" : "全部";
+    $("btnResume").textContent = `前回の続きから（${modeLabel}・${progress}/${total}問完了）`;
+    if (saved.user) {
+      $("userName").value = saved.user.name || "";
+      $("userTeam").value = saved.user.team || "";
+    }
+    // Pre-select the saved mode in cards
+    if (saved.mode) {
+      document.querySelectorAll(".mode-card").forEach(c => c.classList.toggle("selected", c.dataset.mode === saved.mode));
+      selectedMode = saved.mode;
+    }
+  } else if (saved && saved.user) {
+    $("userName").value = saved.user.name || "";
+    $("userTeam").value = saved.user.team || "";
+  }
+  $("btnStart").addEventListener("click", () => {
+    state = {
+      user: { name: $("userName").value.trim(), team: $("userTeam").value.trim() },
+      mode: selectedMode,
+      answers: {}, cursor: 0,
+      brainAnswers: {}, brainCursor: 0,
+      phase: initialPhase(selectedMode),
+      startedAt: new Date().toISOString(),
+    };
+    saveState();
+    show("quiz");
+    renderQuestion();
+  });
+  $("btnResume").addEventListener("click", () => {
+    const saved = loadState();
+    if (!saved) return;
+    state = saved;
+    if (!state.brainAnswers) state.brainAnswers = {};
+    if (state.brainCursor == null) state.brainCursor = 0;
+    if (!state.mode) state.mode = "both";
+    if (!state.phase) state.phase = initialPhase(state.mode);
+    state.user.name = $("userName").value.trim() || state.user.name;
+    state.user.team = $("userTeam").value.trim() || state.user.team;
+    show("quiz");
+    renderQuestion();
+  });
+}
+
+// Per-question timer — 40s, auto-advance on timeout
+const QUESTION_TIMEOUT_MS = 40000;
+let timerTimeoutId = null;
+let timerIntervalId = null;
+
+function startQuestionTimer() {
+  clearQuestionTimer();
+  const bar = $("timerBar");
+  const secs = $("timerSecs");
+  const row = $("timerRow");
+  row.classList.remove("warning");
+  bar.style.transition = "none";
+  bar.style.width = "100%";
+  secs.textContent = "40";
+  void bar.offsetWidth; // force reflow
+  bar.style.transition = `width ${QUESTION_TIMEOUT_MS}ms linear`;
+  bar.style.width = "0%";
+  const start = Date.now();
+  timerIntervalId = setInterval(() => {
+    const remaining = Math.max(0, Math.ceil((QUESTION_TIMEOUT_MS - (Date.now() - start)) / 1000));
+    secs.textContent = remaining;
+    if (remaining <= 10 && !row.classList.contains("warning")) row.classList.add("warning");
+  }, 200);
+  timerTimeoutId = setTimeout(timeoutAdvance, QUESTION_TIMEOUT_MS);
+}
+
+function clearQuestionTimer() {
+  if (timerTimeoutId) { clearTimeout(timerTimeoutId); timerTimeoutId = null; }
+  if (timerIntervalId) { clearInterval(timerIntervalId); timerIntervalId = null; }
+}
+
+function timeoutAdvance() {
+  clearQuestionTimer();
+  if ($("screen-quiz").classList.contains("hidden")) return; // safety: only advance if still on quiz
+  // Skipped — leave answer unset (scoring treats as neutral 0)
+  if (state.cursor + 1 < PAIRS.length) {
+    state.cursor += 1;
+    saveState();
+    renderQuestion();
+  } else {
+    $("progressBar").style.width = "100%";
+    computeAndRender();
+    show("results");
+  }
+}
+
+// ============================================================
+// Quiz — multi-phase flow
+//   Phase "sf": SF ipsative pairs (PAIRS.length=150)
+//   Phase "brain": brain pairs (30) + IO Likert (8) + YY Likert (8) = 46
+//   Phase "done": results
+// ============================================================
+function getBrainSubPhase(brainIdx) {
+  if (brainIdx < BRAIN_PAIRS.length) return "brain_pair";
+  if (brainIdx < BRAIN_PAIRS.length + IO_QUESTIONS.length) return "brain_io";
+  return "brain_yy";
+}
+
+function getOverallProgress() {
+  const total = getTotalQuestions(state.mode);
+  if (state.mode === "sf_only") return { current: state.cursor + 1, total };
+  if (state.mode === "brain_only") return { current: state.brainCursor + 1, total };
+  // mode = both
+  if (state.phase === "sf") return { current: state.cursor + 1, total };
+  return { current: PAIRS.length + state.brainCursor + 1, total };
+}
+
+function setPairUI() {
+  $("pairContainer").classList.remove("hidden");
+  $("likertContainer").classList.add("hidden");
+}
+function setLikertUI() {
+  $("pairContainer").classList.add("hidden");
+  $("likertContainer").classList.remove("hidden");
+}
+function setScaleLabels(type) {
+  if (type === "pair") {
+    $("b1Big").textContent = "A"; $("b1Lbl").textContent = "強くA";
+    $("b2Big").textContent = "A"; $("b2Lbl").textContent = "ややA";
+    $("b3Big").textContent = "＝"; $("b3Lbl").textContent = "どちらとも";
+    $("b4Big").textContent = "B"; $("b4Lbl").textContent = "ややB";
+    $("b5Big").textContent = "B"; $("b5Lbl").textContent = "強くB";
+  } else {
+    $("b1Big").textContent = "1"; $("b1Lbl").textContent = "全く違う";
+    $("b2Big").textContent = "2"; $("b2Lbl").textContent = "あまり";
+    $("b3Big").textContent = "3"; $("b3Lbl").textContent = "どちらとも";
+    $("b4Big").textContent = "4"; $("b4Lbl").textContent = "やや";
+    $("b5Big").textContent = "5"; $("b5Lbl").textContent = "とても";
+  }
+}
+
+function renderQuestion() {
+  const prog = getOverallProgress();
+  $("qCount").textContent = prog.current;
+  $("qTotal").textContent = prog.total;
+  $("qPct").textContent = Math.round((prog.current / prog.total) * 100) + "%";
+  $("progressBar").style.width = `${((prog.current - 1) / prog.total) * 100}%`;
+  document.querySelectorAll(".ipsative-scale button").forEach(b => b.classList.remove("active"));
+
+  if (state.phase === "sf") {
+    const p = PAIRS[state.cursor];
+    const themeA = THEMES.find(t => t.id === p.aTheme);
+    const themeB = THEMES.find(t => t.id === p.bTheme);
+    const domA = DOMAINS[themeA.domain];
+    const domB = DOMAINS[themeB.domain];
+    $("qDomain").innerHTML = `<span style="color:${domA.color};">${domA.label}</span> <span style="color:var(--subtle);">vs</span> <span style="color:${domB.color};">${domB.label}</span>`;
+    $("qTextA").textContent = QUESTIONS[p.aIdx].q;
+    $("qTextB").textContent = QUESTIONS[p.bIdx].q;
+    $("qInstruction").textContent = "どちらがより自分に当てはまりますか？（40秒で自動的に次へ進みます）";
+    $("phaseBanner").classList.remove("show");
+    setPairUI();
+    setScaleLabels("pair");
+  } else if (state.phase === "brain") {
+    const sub = getBrainSubPhase(state.brainCursor);
+    if (sub === "brain_pair") {
+      const idx = state.brainCursor;
+      const p = BRAIN_PAIRS[idx];
+      const bA = BRAINS[p.aBrain];
+      const bB = BRAINS[p.bBrain];
+      $("qDomain").innerHTML = `<span style="color:${bA.color};">${bA.name}</span> <span style="color:var(--subtle);">vs</span> <span style="color:${bB.color};">${bB.name}</span>`;
+      $("qTextA").textContent = p.aQ;
+      $("qTextB").textContent = p.bQ;
+      $("qInstruction").textContent = "どちらがより自分に当てはまりますか？（40秒で自動的に次へ進みます）";
+      $("phaseBanner").textContent = "Part 2 — 4脳分類";
+      $("phaseBanner").classList.add("show");
+      setPairUI();
+      setScaleLabels("pair");
+    } else if (sub === "brain_io") {
+      const idx = state.brainCursor - BRAIN_PAIRS.length;
+      const q = IO_QUESTIONS[idx];
+      $("qDomain").innerHTML = `<span style="color:var(--accent);">内向／外向</span>`;
+      $("qLikertText").textContent = q.q;
+      $("qInstruction").textContent = "この文がどれくらい自分に当てはまりますか？（40秒で自動的に次へ進みます）";
+      $("phaseBanner").textContent = "Part 2 — 4脳分類 ／ 内向↔外向";
+      $("phaseBanner").classList.add("show");
+      setLikertUI();
+      setScaleLabels("likert");
+    } else {
+      const idx = state.brainCursor - BRAIN_PAIRS.length - IO_QUESTIONS.length;
+      const q = YY_QUESTIONS[idx];
+      $("qDomain").innerHTML = `<span style="color:var(--accent);">陰／陽</span>`;
+      $("qLikertText").textContent = q.q;
+      $("qInstruction").textContent = "この文がどれくらい自分に当てはまりますか？（40秒で自動的に次へ進みます）";
+      $("phaseBanner").textContent = "Part 2 — 4脳分類 ／ 陰↔陽";
+      $("phaseBanner").classList.add("show");
+      setLikertUI();
+      setScaleLabels("likert");
+    }
+  }
+  startQuestionTimer();
+}
+
+function answer(val) {
+  clearQuestionTimer();
+  if (state.phase === "sf") {
+    state.answers[state.cursor] = val;
+  } else {
+    state.brainAnswers[state.brainCursor] = val;
+  }
+  saveState();
+  document.querySelectorAll(".ipsative-scale button").forEach(b => {
+    b.classList.toggle("active", parseInt(b.dataset.val, 10) === val);
+  });
+  setTimeout(() => {
+    if (state.phase === "sf") {
+      if (state.cursor + 1 < PAIRS.length) {
+        state.cursor += 1;
+        saveState();
+        renderQuestion();
+      } else {
+        // SF phase complete
+        if (state.mode === "both") {
+          state.phase = "brain";
+          state.brainCursor = 0;
+          saveState();
+          renderQuestion();
+        } else {
+          // sf_only → done
+          $("progressBar").style.width = "100%";
+          state.phase = "done";
+          saveState();
+          computeAndRender();
+          show("results");
+        }
+      }
+    } else {
+      if (state.brainCursor + 1 < BRAIN_TOTAL) {
+        state.brainCursor += 1;
+        saveState();
+        renderQuestion();
+      } else {
+        $("progressBar").style.width = "100%";
+        state.phase = "done";
+        saveState();
+        computeAndRender();
+        show("results");
+      }
+    }
+  }, 160);
+}
+
+function initQuiz() {
+  document.querySelectorAll(".ipsative-scale button").forEach(b => {
+    b.addEventListener("click", () => answer(parseInt(b.dataset.val, 10)));
+  });
+  $("btnReset").addEventListener("click", () => {
+    if (confirm("回答をすべて削除して最初からやり直しますか？")) {
+      clearQuestionTimer();
+      clearState();
+      state = { user: { name: "", team: "" }, mode: "both", answers: {}, cursor: 0, brainAnswers: {}, brainCursor: 0, phase: "sf", startedAt: null };
+      $("btnResume").style.display = "none";
+      show("intro");
+    }
+  });
+  document.addEventListener("keydown", (e) => {
+    if ($("screen-quiz").classList.contains("hidden")) return;
+    if (e.key >= "1" && e.key <= "5") answer(parseInt(e.key, 10));
+  });
+}
+
+// ============================================================
+// Scoring — ipsative pair-based
+//   Each pair answer (1..5) shifts points between two themes:
+//     1 (強くA) → A: +2, B: -2
+//     2 (ややA) → A: +1, B: -1
+//     3 (中)   → A:  0, B:  0
+//     4 (ややB) → A: -1, B: +1
+//     5 (強くB) → A: -2, B: +2
+//   Per theme: raw range = [-2N, +2N] where N = pairs containing that theme.
+//   Normalize: score = (raw + 2N) / 4N * 100  → 0..100
+// ============================================================
+const DELTA_BY_VAL = { 1: 2, 2: 1, 3: 0, 4: -1, 5: -2 };
+
+function computeScores() {
+  const rawByTheme = {};
+  const pairCountByTheme = {};
+  THEMES.forEach(t => { rawByTheme[t.id] = 0; pairCountByTheme[t.id] = 0; });
+  PAIRS.forEach((p, i) => {
+    pairCountByTheme[p.aTheme]++;
+    pairCountByTheme[p.bTheme]++;
+    const v = state.answers[i];
+    if (typeof v !== "number") return;
+    const aDelta = DELTA_BY_VAL[v] ?? 0;
+    rawByTheme[p.aTheme] += aDelta;
+    rawByTheme[p.bTheme] -= aDelta;
+  });
+  const scored = THEMES.map(t => {
+    const N = Math.max(1, pairCountByTheme[t.id]);
+    const raw = rawByTheme[t.id];
+    const score = Math.round(((raw + 2 * N) / (4 * N)) * 100);
+    return { ...t, raw, pairCount: pairCountByTheme[t.id], score };
+  });
+  scored.sort((a, b) => b.score - a.score || a.name.localeCompare(b.name, "ja"));
+  scored.forEach((s, i) => s.rank = i + 1);
+  const domainAgg = {};
+  Object.keys(DOMAINS).forEach(d => domainAgg[d] = { total: 0, count: 0 });
+  scored.forEach(s => { domainAgg[s.domain].total += s.score; domainAgg[s.domain].count += 1; });
+  const domainScores = {};
+  Object.keys(domainAgg).forEach(d => {
+    domainScores[d] = Math.round(domainAgg[d].total / domainAgg[d].count);
+  });
+  return { scored, domainScores };
+}
+
+// ============================================================
+// Archetypes
+// ============================================================
+const ARCHETYPES = {
+  exec:       { name: "実行型エンジン",       tag: "計画を着実に形に変え、組織のアウトプットを生み出す推進役。安定した遂行力で信頼を蓄積するタイプ。" },
+  infl:       { name: "影響型リーダー",       tag: "周囲を巻き込み、人と意思決定を動かす存在感。場の流れを変える力で変化を起こすタイプ。" },
+  rel:        { name: "共感型ハーモナイザー", tag: "信頼関係と場の調和から価値を生み出す。深い人間理解で組織の心理的基盤を支えるタイプ。" },
+  strat:      { name: "戦略型シンカー",       tag: "深い思考と未来構想で道筋を描き、最適解を見つけ出す。複雑な問いを解きほぐすタイプ。" },
+  exec_infl:  { name: "推進型リーダー",       tag: "自ら手を動かしながら周囲を巻き込み、結果まで持ち切る現場最前線のリーダー。" },
+  exec_rel:   { name: "実直型サポーター",     tag: "誠実な実行と人間関係の両輪で、組織を底から支える縁の下の力持ち。" },
+  exec_strat: { name: "戦略実行型",           tag: "戦略を描き、自らその実行までやり切る稀有な総合力タイプ。" },
+  infl_rel:   { name: "共感型リーダー",       tag: "感情と信頼を読み取り、人を率いて道を作る。チームの中心になりやすいタイプ。" },
+  infl_strat: { name: "ビジョナリー",         tag: "未来を語り、人を動かして変化を起こす。新規事業や創業に向く構想型。" },
+  rel_strat:  { name: "戦略パートナー",       tag: "深い思考と信頼関係で意思決定を支える。参謀役・伴走者として光るタイプ。" },
+  balanced:   { name: "オールラウンダー",     tag: "4領域をバランス良く備えた、状況に応じて役割を切り替えられる万能型。" },
+};
+
+function computeArchetype(scored) {
+  const top5 = scored.slice(0, 5);
+  const counts = { exec: 0, infl: 0, rel: 0, strat: 0 };
+  top5.forEach(s => counts[s.domain]++);
+  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  const [d1, c1] = sorted[0];
+  const [d2, c2] = sorted[1];
+  if (c1 >= 3) return ARCHETYPES[d1];
+  if (c1 === 2 && c2 === 2) {
+    const key = [d1, d2].sort().join("_");
+    return ARCHETYPES[key] || ARCHETYPES.balanced;
+  }
+  return ARCHETYPES.balanced;
+}
+
+// ============================================================
+// Color helpers
+// ============================================================
+function hexToRgb(hex) {
+  const h = hex.replace("#", "");
+  return [
+    parseInt(h.substr(0, 2), 16),
+    parseInt(h.substr(2, 2), 16),
+    parseInt(h.substr(4, 2), 16),
+  ];
+}
+
+// Dramatic 6-tier gradient — top tiers fully saturated, bottom tiers ghost-like
+const RANK_TIERS = [
+  { max: 5,  opacity: 1.00, light: true },   // 1-5  : 完全飽和
+  { max: 10, opacity: 0.80, light: true },   // 6-10 : 濃色
+  { max: 15, opacity: 0.45, light: false },  // 11-15: 中間
+  { max: 20, opacity: 0.25, light: false },  // 16-20: 薄
+  { max: 25, opacity: 0.12, light: false },  // 21-25: 極薄
+  { max: 99, opacity: 0.05, light: false },  // 26+  : ゴースト
+];
+
+function rankPalette(domain, rank) {
+  const tier = RANK_TIERS.find(t => rank <= t.max) || RANK_TIERS[RANK_TIERS.length - 1];
+  const [r, g, b] = hexToRgb(DOMAINS[domain].color);
+  return {
+    bg: `rgba(${r},${g},${b},${tier.opacity})`,
+    color: tier.light ? "#ffffff" : "#1a1a1a",
+  };
+}
+
+function dnaOpacity(rank) {
+  // Use the same tier system as the matrix for visual consistency
+  const tier = RANK_TIERS.find(t => rank <= t.max) || RANK_TIERS[RANK_TIERS.length - 1];
+  return tier.opacity;
+}
+
+// ============================================================
+// Render results
+// ============================================================
+function renderResults({ scored, domainScores }) {
+  $("rName").textContent = state.user.name || "Anonymous";
+  const metaBits = [];
+  if (state.user.team) metaBits.push(state.user.team);
+  metaBits.push(new Date().toLocaleDateString("ja-JP", { year: "numeric", month: "long", day: "numeric" }));
+  $("rMeta").textContent = metaBits.join("  ·  ");
+
+  const archetype = computeArchetype(scored);
+  $("rArchetypeName").textContent = archetype.name;
+  $("rArchetypeTag").textContent = archetype.tag;
+
+  $("dnaStrip").innerHTML = scored.map(s => {
+    const dom = DOMAINS[s.domain];
+    return `<div class="dna-bar" style="background:${dom.color};opacity:${dnaOpacity(s.rank).toFixed(2)};" title="No.${s.rank} ${s.name} (${dom.label})"></div>`;
+  }).join("");
+
+  const order = ["exec", "infl", "rel", "strat"];
+  $("matrix").innerHTML = order.map(d => {
+    const dom = DOMAINS[d];
+    const themesInDomain = scored.filter(s => s.domain === d);
+    const cellsHtml = themesInDomain.map(s => {
+      const pal = rankPalette(d, s.rank);
+      return `<div class="cell" data-id="${s.id}" style="background:${pal.bg};color:${pal.color};" title="${s.name} (順位${s.rank}, スコア${s.score})">
+        <div class="rank">${s.rank}</div>
+        <div class="nm">${s.name}</div>
+      </div>`;
+    }).join("");
+    return `<div class="matrix-col" data-d="${d}">
+      <div class="col-head">${dom.label}</div>
+      <div class="matrix-cells">${cellsHtml}</div>
+    </div>`;
+  }).join("");
+  document.querySelectorAll(".cell").forEach(c => {
+    c.addEventListener("click", () => {
+      const id = c.dataset.id;
+      const target = document.getElementById("listrow-" + id);
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth", block: "center" });
+        const detail = document.getElementById("listdetail-" + id);
+        if (detail && !detail.classList.contains("open")) {
+          detail.classList.add("open");
+          target.classList.add("expanded");
+        }
+      }
+    });
+  });
+
+  const totalScore = order.reduce((s, d) => s + domainScores[d], 0);
+  const sortedDoms = order.slice().sort((a, b) => domainScores[b] - domainScores[a]);
+  const dominant = sortedDoms[0];
+  const top2 = sortedDoms.slice(0, 2);
+  const isCloseSecond = (domainScores[top2[0]] - domainScores[top2[1]]) <= 8;
+  const domLabel = isCloseSecond
+    ? `<span class="hl">「${DOMAINS[top2[0]].label}」</span> と <span class="hl">「${DOMAINS[top2[1]].label}」</span>`
+    : `<span class="hl">「${DOMAINS[dominant].label}」</span>`;
+  $("dominantText").innerHTML = `あなたは${domLabel}の資質に最も強みがあります。`;
+  $("dominantBar").innerHTML = sortedDoms.map(d => {
+    const pct = (domainScores[d] / totalScore) * 100;
+    return `<div style="flex:${pct};background:${DOMAINS[d].color};"></div>`;
+  }).join("");
+  $("dominantLegend").innerHTML = sortedDoms.map(d =>
+    `<span class="item"><span class="swatch" style="background:${DOMAINS[d].color}"></span>${DOMAINS[d].label} <b>${domainScores[d]}</b></span>`
+  ).join("");
+
+  $("rTop5").innerHTML = scored.slice(0, 5).map(s => {
+    const dom = DOMAINS[s.domain];
+    return `<div class="row">
+      <div class="rank">No.${String(s.rank).padStart(2, "0")}</div>
+      <div class="body">
+        <div class="name">${s.name}</div>
+        <div class="desc">${s.short}</div>
+        <div class="dom" style="color:${dom.color};">${dom.label}</div>
+      </div>
+      <div class="score">${s.score}<span class="pct"> / 100</span></div>
+    </div>`;
+  }).join("");
+
+  $("rList").innerHTML = scored.map(s => {
+    const dom = DOMAINS[s.domain];
+    return `<div class="r-list-row" id="listrow-${s.id}" data-id="${s.id}">
+      <div class="rk">${String(s.rank).padStart(2, "0")}</div>
+      <div class="dot" style="background:${dom.color};"></div>
+      <div class="nm">${s.name}</div>
+      <div class="br"><div style="width:${s.score}%;background:${dom.color};"></div></div>
+      <div class="sc">${s.score}</div>
+    </div>
+    <div class="r-list-detail" id="listdetail-${s.id}">${s.detail}</div>`;
+  }).join("");
+  document.querySelectorAll(".r-list-row").forEach(tr => {
+    tr.addEventListener("click", () => {
+      const id = tr.dataset.id;
+      const detail = $("listdetail-" + id);
+      detail.classList.toggle("open");
+      tr.classList.toggle("expanded");
+    });
+  });
+}
+
+// ============================================================
+// 4脳分類のスコア計算
+// ============================================================
+function computeBrainProfile() {
+  const brainScores = { dominator: 0, player: 0, observer: 0, seeker: 0 };
+  const brainCounts = { dominator: 0, player: 0, observer: 0, seeker: 0 };
+  BRAIN_PAIRS.forEach((p, i) => {
+    brainCounts[p.aBrain]++;
+    brainCounts[p.bBrain]++;
+    const v = state.brainAnswers[i];
+    if (typeof v !== "number") return;
+    const aDelta = DELTA_BY_VAL[v] ?? 0;
+    brainScores[p.aBrain] += aDelta;
+    brainScores[p.bBrain] -= aDelta;
+  });
+  const brainNorm = {};
+  Object.keys(brainScores).forEach(b => {
+    const N = Math.max(1, brainCounts[b]);
+    brainNorm[b] = Math.round(((brainScores[b] + 2 * N) / (4 * N)) * 100);
+  });
+
+  // Intro/Extro: -100..+100 (- = intro, + = extro)
+  let ioRaw = 0;
+  let ioCount = 0;
+  IO_QUESTIONS.forEach((q, i) => {
+    const v = state.brainAnswers[BRAIN_PAIRS.length + i];
+    if (typeof v !== "number") return;
+    const sign = q.polarity === "extro" ? 1 : -1;
+    ioRaw += sign * (v - 3);
+    ioCount++;
+  });
+  const ioScore = ioCount > 0 ? Math.round((ioRaw / (ioCount * 2)) * 100) : 0;
+
+  // Yin/Yang: -100..+100 (- = yin, + = yang)
+  let yyRaw = 0;
+  let yyCount = 0;
+  YY_QUESTIONS.forEach((q, i) => {
+    const v = state.brainAnswers[BRAIN_PAIRS.length + IO_QUESTIONS.length + i];
+    if (typeof v !== "number") return;
+    const sign = q.polarity === "yang" ? 1 : -1;
+    yyRaw += sign * (v - 3);
+    yyCount++;
+  });
+  const yyScore = yyCount > 0 ? Math.round((yyRaw / (yyCount * 2)) * 100) : 0;
+
+  const sortedBrains = Object.entries(brainNorm).sort((a, b) => b[1] - a[1]);
+  const dominantBrain = sortedBrains[0][0];
+  const direction = ioScore < 0 ? "内向" : "外向";
+  const polarity = yyScore < 0 ? "陰" : "陽";
+  const typeLabel = `${BRAINS[dominantBrain].name}${direction}${polarity}`;
+
+  return {
+    brainScores: brainNorm,
+    sortedBrains: sortedBrains.map(([id, score]) => ({ id, ...BRAINS[id], score })),
+    dominantBrain,
+    direction,
+    polarity,
+    ioScore,
+    yyScore,
+    typeLabel,
+  };
+}
+
+function computeAndRender() {
+  const mode = state.mode || "both";
+  // Show / hide sections based on mode
+  const sfSections = [
+    document.querySelector(".r-hero"),
+    ...document.querySelectorAll(".r-section"),
+  ];
+  // Section indices in DOM:
+  //   0: hero
+  //   1: 01 — Strength Map
+  //   2: 02 — Top 5 Strengths
+  //   3: 03 — All 34 Themes
+  //   4: 04 — 4脳プロフィール
+  //   5: 05 — Calibration
+  const allSections = document.querySelectorAll("#screen-results > .r-section");
+  const sectionMap = {
+    strengthMap: allSections[0],   // 01
+    top5: allSections[1],          // 02
+    allThemes: allSections[2],     // 03
+    brainProfile: allSections[3],  // 04
+    crossAnalysis: allSections[4], // 05 (NEW)
+    calibration: allSections[5],   // 06
+  };
+
+  if (mode === "sf_only") {
+    document.querySelector(".r-hero").style.display = "";
+    document.querySelector(".r-archetype-label").textContent = "Archetype";
+    sectionMap.strengthMap.style.display = "";
+    sectionMap.top5.style.display = "";
+    sectionMap.allThemes.style.display = "";
+    sectionMap.brainProfile.style.display = "none";
+    sectionMap.crossAnalysis.style.display = "none";
+    sectionMap.calibration.style.display = "";
+    const result = computeScores();
+    state.lastResult = result;
+    state.lastBrainProfile = null;
+    saveState();
+    renderResults(result);
+  } else if (mode === "brain_only") {
+    // Use main hero to show brain type (no SF archetype)
+    document.querySelector(".r-hero").style.display = "";
+    document.querySelector(".r-archetype-label").textContent = "Brain Type";
+    sectionMap.strengthMap.style.display = "none";
+    sectionMap.top5.style.display = "none";
+    sectionMap.allThemes.style.display = "none";
+    sectionMap.brainProfile.style.display = "";
+    sectionMap.crossAnalysis.style.display = "none";
+    sectionMap.calibration.style.display = "none";
+    const brain = computeBrainProfile();
+    state.lastResult = null;
+    state.lastBrainProfile = brain;
+    saveState();
+    // Set hero with brain type
+    $("rName").textContent = state.user.name || "Anonymous";
+    const metaBits = [];
+    if (state.user.team) metaBits.push(state.user.team);
+    metaBits.push(new Date().toLocaleDateString("ja-JP", { year: "numeric", month: "long", day: "numeric" }));
+    $("rMeta").textContent = metaBits.join("  ·  ");
+    $("rArchetypeName").textContent = brain.typeLabel;
+    const dom = BRAINS[brain.dominantBrain];
+    $("rArchetypeTag").textContent = dom.detail;
+    renderBrainProfile(brain);
+  } else {
+    // both
+    document.querySelector(".r-hero").style.display = "";
+    document.querySelector(".r-archetype-label").textContent = "Archetype";
+    sectionMap.strengthMap.style.display = "";
+    sectionMap.top5.style.display = "";
+    sectionMap.allThemes.style.display = "";
+    sectionMap.brainProfile.style.display = "";
+    sectionMap.crossAnalysis.style.display = "";
+    sectionMap.calibration.style.display = "";
+    const result = computeScores();
+    const brain = computeBrainProfile();
+    state.lastResult = result;
+    state.lastBrainProfile = brain;
+    saveState();
+    renderResults(result);
+    renderBrainProfile(brain);
+    renderCrossAnalysis(result, brain);
+  }
+}
+
+// ============================================================
+// Cross Analysis: 統合アーキタイプ + 4ブロック
+// ============================================================
+function renderCrossAnalysis(result, brain) {
+  // 1. Integrated Archetype
+  const dominantDomain = Object.entries(result.domainScores).sort((a, b) => b[1] - a[1])[0][0];
+  const key = `${brain.dominantBrain}_${dominantDomain}`;
+  const integrated = INTEGRATED_ARCHETYPES[key] || { name: "ユニーク型", tag: "標準的なパターンに収まらないユニークな組合せです。" };
+  $("integratedName").textContent = integrated.name;
+  $("integratedTag").textContent = `${BRAINS[brain.dominantBrain].name}${brain.direction}${brain.polarity} × ${DOMAINS[dominantDomain].label} → ${integrated.tag}`;
+
+  const top5 = result.scored.slice(0, 5);
+  const top10 = result.scored.slice(0, 10);
+  const bottom5 = result.scored.slice(-5);
+  const affinity = BRAIN_SF_AFFINITY[brain.dominantBrain];
+  const fit = BRAIN_FIT[brain.dominantBrain];
+  const brainName = BRAINS[brain.dominantBrain].name;
+
+  // 2. Synergy
+  const alignedInTop10 = top10.filter(t => affinity.aligned.includes(t.id));
+  if (alignedInTop10.length > 0) {
+    $("crossSynergy").innerHTML = `
+      <p class="intro"><b>${brainName}</b>タイプと自然に共鳴する資質が Top10 に <b>${alignedInTop10.length}</b> 個。本領を発揮できる組合せです。</p>
+      <ul>
+        ${alignedInTop10.slice(0, 5).map(t => `<li><b>${t.name}</b>（${t.rank}位）— ${t.short}</li>`).join("")}
+      </ul>
+    `;
+  } else {
+    $("crossSynergy").innerHTML = `<p class="intro">Top10 に <b>${brainName}</b>タイプと典型的に共鳴する資質が見当たりません。少しユニークなパターン。</p>`;
+  }
+
+  // 3. Gap
+  const unexpectedInTop10 = top10.filter(t => affinity.unexpected.includes(t.id));
+  if (unexpectedInTop10.length > 0) {
+    $("crossGap").innerHTML = `
+      <p class="intro"><b>${brainName}</b>タイプとは意外な組合せの上位資質。「自己認識（4脳）」と「行動パターン（SF）」のズレが見えます:</p>
+      <ul>
+        ${unexpectedInTop10.slice(0, 5).map(t => `<li><b>${t.name}</b>（${t.rank}位）— ${t.short}</li>`).join("")}
+      </ul>
+      <p class="intro">これは矛盾ではなく、あなたの<b>多面性</b>です。${brainName}の本質を持ちながら、状況によってはこれらの行動も発揮できる柔軟さがあります。</p>
+    `;
+  } else {
+    $("crossGap").innerHTML = `<p class="intro">4脳タイプと SF が一致しています。自己認識と行動パターンに大きなズレがありません。</p>`;
+  }
+
+  // 4. Best Fit
+  const top3Names = top5.slice(0, 3).map(t => t.name).join("・");
+  $("crossFit").innerHTML = `
+    <div class="group">
+      <span class="label-strong">向いている職種</span>
+      <div>${fit.fitJobs.join("・")}</div>
+    </div>
+    <div class="group">
+      <span class="label-strong">合う環境</span>
+      <div>${fit.fitEnv.map(e => `「${e}」`).join(" / ")}</div>
+    </div>
+    <div class="group">
+      <span class="label-strong">あなたの Top3 を活かす</span>
+      <div><b>${top3Names}</b> を武器に、${integrated.name}としての立ち位置を取るのが最大の力の発揮ポイント。</div>
+    </div>
+  `;
+
+  // 5. Blind Spots
+  const lowAlignedThemes = bottom5.filter(t => affinity.aligned.includes(t.id));
+  $("crossBlindspot").innerHTML = `
+    <div class="group">
+      <span class="label-strong">${brainName}が陥りやすい罠</span>
+      <ul style="margin-top: 6px;">
+        ${fit.avoid.map(a => `<li>${a}</li>`).join("")}
+      </ul>
+    </div>
+    <div class="group">
+      <span class="label-strong">SF Bottom5（弱い行動領域）</span>
+      <ul style="margin-top: 6px;">
+        ${bottom5.map(t => `<li><b>${t.name}</b>（${t.rank}位）— ${t.short}が苦手</li>`).join("")}
+      </ul>
+    </div>
+    ${lowAlignedThemes.length > 0 ? `
+    <div class="group" style="padding: 10px 12px; background: rgba(214,56,56,.07); border-radius: 6px; margin-top: 10px;">
+      <span class="label-strong" style="color:#d63838;">⚠️ 注意</span>
+      ${brainName}タイプが本来武器とすべき<b>${lowAlignedThemes.map(t => t.name).join("・")}</b>が下位に。期待される強みを発揮しづらい構造かもしれません。
+    </div>
+    ` : ""}
+  `;
+}
+
+function renderBrainProfile(brain) {
+  $("bTypeLabel").textContent = brain.typeLabel;
+  const dom = BRAINS[brain.dominantBrain];
+  $("bTypeTag").textContent = `${dom.detail} 主軸 ${brain.direction === "内向" ? "一人で考える時間で回復" : "外と関わる時間で回復"}し、表現は${brain.polarity === "陽" ? "直接的・主体的" : "繊細・受容的"}。`;
+
+  // 4 brain bars (sorted by score)
+  $("brainBars").innerHTML = brain.sortedBrains.map(b => `
+    <div class="bar-row">
+      <div class="bar-name" style="color:${b.color};">${b.name}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${b.score}%;background:${b.color};"></div></div>
+      <div class="bar-score">${b.score}</div>
+    </div>
+  `).join("");
+
+  // IO axis: ioScore -100..+100
+  const ioPct = ((brain.ioScore + 100) / 200) * 100;
+  $("axisIO").innerHTML = `
+    <div class="axis-label"><span>内向</span><span>外向</span></div>
+    <div class="axis-track">
+      <div class="axis-mid"></div>
+      <div class="axis-marker" style="left:${ioPct}%;"></div>
+    </div>
+    <div class="axis-value"><span>${brain.direction}寄り</span><span class="now">${brain.ioScore > 0 ? "+" : ""}${brain.ioScore}</span></div>
+  `;
+
+  // YY axis
+  const yyPct = ((brain.yyScore + 100) / 200) * 100;
+  $("axisYY").innerHTML = `
+    <div class="axis-label"><span>陰</span><span>陽</span></div>
+    <div class="axis-track">
+      <div class="axis-mid"></div>
+      <div class="axis-marker" style="left:${yyPct}%;"></div>
+    </div>
+    <div class="axis-value"><span>${brain.polarity}寄り</span><span class="now">${brain.yyScore > 0 ? "+" : ""}${brain.yyScore}</span></div>
+  `;
+}
+
+// ============================================================
+// Export
+// ============================================================
+function showToast(msg) {
+  const el = $("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  setTimeout(() => el.classList.remove("show"), 1800);
+}
+
+function downloadFile(name, mime, content) {
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function exportJson() {
+  const r = state.lastResult;
+  const brain = state.lastBrainProfile;
+  const mode = state.mode || "both";
+  const payload = {
+    user: state.user,
+    toolVersion: TOOL_VERSION,
+    mode: mode,
+    source: "self_tool",
+    takenAt: state.startedAt,
+    completedAt: new Date().toISOString(),
+  };
+  if (r) {
+    payload.archetype = computeArchetype(r.scored);
+    payload.domainScores = r.domainScores;
+    payload.themes = r.scored.map(s => ({ rank: s.rank, id: s.id, name: s.name, domain: s.domain, score: s.score }));
+    payload.answers = state.answers;
+    payload.pairs = PAIRS.map(p => ({
+      aIdx: p.aIdx, bIdx: p.bIdx,
+      aTheme: p.aTheme, bTheme: p.bTheme,
+      aQ: QUESTIONS[p.aIdx].q, bQ: QUESTIONS[p.bIdx].q,
+    }));
+  }
+  if (brain) {
+    payload.brainProfile = {
+      typeLabel: brain.typeLabel,
+      dominantBrain: brain.dominantBrain,
+      direction: brain.direction,
+      polarity: brain.polarity,
+      ioScore: brain.ioScore,
+      yyScore: brain.yyScore,
+      brainScores: brain.brainScores,
+    };
+    payload.brainAnswers = state.brainAnswers;
+  }
+  const fname = `strengths_${TOOL_VERSION}_${(state.user.name || "anon").replace(/\s+/g,"_")}_${new Date().toISOString().slice(0,10)}.json`;
+  downloadFile(fname, "application/json", JSON.stringify(payload, null, 2));
+  showToast("JSONを書き出しました");
+}
+
+function exportCsv() {
+  const r = state.lastResult;
+  const lines = ["rank,id,name,domain,score"];
+  r.scored.forEach(s => {
+    lines.push([s.rank, s.id, s.name, DOMAINS[s.domain].label, s.score].join(","));
+  });
+  lines.push("");
+  lines.push("domain,score");
+  Object.keys(r.domainScores).forEach(d => {
+    lines.push([DOMAINS[d].label, r.domainScores[d]].join(","));
+  });
+  const fname = `strengths_${(state.user.name || "anon").replace(/\s+/g,"_")}_${new Date().toISOString().slice(0,10)}.csv`;
+  downloadFile(fname, "text/csv;charset=utf-8", "﻿" + lines.join("\n"));
+  showToast("CSVを書き出しました");
+}
+
+// PDF download — opens print dialog with full themes detail expanded
+function downloadPdf() {
+  // Expand all theme details so PDF shows full content
+  document.querySelectorAll(".r-list-detail").forEach(el => el.classList.add("open"));
+  setTimeout(() => window.print(), 200);
+}
+
+// ============================================================
+// Calibration: Gallup result input and comparison
+// ============================================================
+const VALID_GALLUP_NAMES = THEMES.map(t => t.name);
+const GALLUP_DOMAIN_BY_NAME = {};
+THEMES.forEach(t => GALLUP_DOMAIN_BY_NAME[t.name] = t.domain);
+
+function setMsg(id, type, text) {
+  const el = $(id);
+  if (!text) { el.innerHTML = ""; return; }
+  el.innerHTML = `<div class="cal-msg ${type}">${text}</div>`;
+}
+
+function parseGallupInput(raw) {
+  const lines = raw.split("\n").map(s => s.trim()).filter(Boolean);
+  if (lines.length !== 34) {
+    return { error: `34資質必要ですが、${lines.length}行入力されています` };
+  }
+  const themes = [];
+  const seen = new Set();
+  for (let i = 0; i < lines.length; i++) {
+    let name = lines[i];
+    // Strip leading numbers/dots like "1." or "1:"
+    name = name.replace(/^\s*\d+[.\)\:、:]\s*/, "").trim();
+    if (!VALID_GALLUP_NAMES.includes(name)) {
+      return { error: `${i + 1}行目の「${name}」は34資質に含まれていません` };
+    }
+    if (seen.has(name)) {
+      return { error: `${i + 1}行目の「${name}」が重複しています` };
+    }
+    seen.add(name);
+    themes.push({ rank: i + 1, name, domain: GALLUP_DOMAIN_BY_NAME[name] });
+  }
+  return { themes };
+}
+
+function saveGallup() {
+  setMsg("gallupMsg", null);
+  const raw = $("gallupInput").value;
+  const result = parseGallupInput(raw);
+  if (result.error) {
+    setMsg("gallupMsg", "err", result.error);
+    return;
+  }
+  const payload = {
+    user: { name: state.user.name || "Anonymous" },
+    source: "gallup_official",
+    takenAt: new Date().toISOString().slice(0, 10),
+    themes: result.themes,
+  };
+  const fname = `gallup_${(state.user.name || "anon").replace(/\s+/g, "_")}_${new Date().toISOString().slice(0, 10)}.json`;
+  downloadFile(fname, "application/json", JSON.stringify(payload, null, 2));
+  setMsg("gallupMsg", "ok", `JSON書き出し成功（${fname}）`);
+}
+
+function fillGallupExample() {
+  $("gallupInput").value = THEMES.map((t, i) => `${i + 1}. ${t.name}`).join("\n");
+}
+
+async function compareWithGallup() {
+  setMsg("cmpMsg", null);
+  $("cmpResult").innerHTML = "";
+  const file = $("gallupFileInput").files[0];
+  if (!file) {
+    setMsg("cmpMsg", "err", "Gallup結果のJSONファイルを選択してください");
+    return;
+  }
+  if (!state.lastResult) {
+    setMsg("cmpMsg", "err", "先に診断を完了してから比較してください");
+    return;
+  }
+  let gallup;
+  try {
+    const text = await file.text();
+    gallup = JSON.parse(text);
+  } catch (e) {
+    setMsg("cmpMsg", "err", "JSONとして読み込めません: " + e.message);
+    return;
+  }
+  if (!Array.isArray(gallup.themes) || gallup.themes.length !== 34) {
+    setMsg("cmpMsg", "err", "Gallup結果のJSON形式が不正です（themes配列が34項目必要）");
+    return;
+  }
+  renderComparison(gallup);
+}
+
+function renderComparison(gallup) {
+  const self = state.lastResult.scored;
+  const gallupRankByName = {};
+  gallup.themes.forEach(t => gallupRankByName[t.name] = t.rank);
+
+  const rows = self.map(s => ({
+    name: s.name,
+    domain: s.domain,
+    selfRank: s.rank,
+    selfScore: s.score,
+    gallupRank: gallupRankByName[s.name] || null,
+  })).map(r => ({
+    ...r,
+    delta: r.gallupRank == null ? null : (r.selfRank - r.gallupRank),
+  }));
+
+  // Stats
+  const validRows = rows.filter(r => r.delta != null);
+  const meanAbsDelta = validRows.reduce((sum, r) => sum + Math.abs(r.delta), 0) / validRows.length;
+  const top10Self = new Set(self.slice(0, 10).map(s => s.name));
+  const top10Gallup = new Set(gallup.themes.slice(0, 10).map(t => t.name));
+  const top10Overlap = [...top10Self].filter(n => top10Gallup.has(n)).length;
+  const bottom5Self = new Set(self.slice(-5).map(s => s.name));
+  const bottom5Gallup = new Set(gallup.themes.slice(-5).map(t => t.name));
+  const bottom5Overlap = [...bottom5Self].filter(n => bottom5Gallup.has(n)).length;
+  const within5Count = validRows.filter(r => Math.abs(r.delta) <= 5).length;
+
+  const sortedByDelta = [...rows].sort((a, b) => Math.abs(b.delta || 0) - Math.abs(a.delta || 0));
+  const worstThemes = sortedByDelta.slice(0, 5);
+
+  const summaryHtml = `
+    <div class="cmp-summary">
+      <div class="cmp-stat"><div class="lbl">平均ズレ</div><div class="val ${meanAbsDelta < 6 ? 'good' : meanAbsDelta < 9 ? '' : 'bad'}">${meanAbsDelta.toFixed(1)}</div></div>
+      <div class="cmp-stat"><div class="lbl">Top10一致</div><div class="val ${top10Overlap >= 6 ? 'good' : ''}">${top10Overlap}/10</div></div>
+      <div class="cmp-stat"><div class="lbl">Bottom5一致</div><div class="val ${bottom5Overlap >= 3 ? 'good' : ''}">${bottom5Overlap}/5</div></div>
+      <div class="cmp-stat"><div class="lbl">±5位以内</div><div class="val ${within5Count >= 18 ? 'good' : ''}">${within5Count}/34</div></div>
+    </div>
+  `;
+
+  const sortedRows = [...rows].sort((a, b) => (a.gallupRank || 99) - (b.gallupRank || 99));
+  const tableRows = sortedRows.map(r => {
+    const dom = DOMAINS[r.domain];
+    const deltaClass = r.delta == null ? "" :
+      Math.abs(r.delta) <= 3 ? "delta-good" :
+      Math.abs(r.delta) >= 10 ? "delta-bad" : "delta-ok";
+    const deltaText = r.delta == null ? "—" :
+      r.delta > 0 ? `+${r.delta}` : `${r.delta}`;
+    return `<tr>
+      <td>${r.gallupRank ?? "—"}</td>
+      <td class="theme-cell"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${dom.color};margin-right:8px;"></span>${r.name}</td>
+      <td>${r.selfRank}</td>
+      <td class="${deltaClass}">${deltaText}</td>
+      <td>${r.selfScore}</td>
+    </tr>`;
+  }).join("");
+
+  const worstHtml = `
+    <div style="margin-top: 16px; font-size: 13px;">
+      <b>ズレが大きい資質トップ5（要チューニング）：</b>
+      <ul style="margin: 8px 0 0 0; padding-left: 20px; line-height: 1.8;">
+        ${worstThemes.map(r => `<li><b>${r.name}</b>：Gallup ${r.gallupRank}位 vs 自作 ${r.selfRank}位（${r.delta > 0 ? '+' : ''}${r.delta}）</li>`).join("")}
+      </ul>
+    </div>
+  `;
+
+  $("cmpResult").innerHTML = `
+    ${summaryHtml}
+    ${worstHtml}
+    <table class="cmp-table">
+      <thead><tr><th>Gallup順位</th><th>資質</th><th>自作順位</th><th>ズレ</th><th>自作スコア</th></tr></thead>
+      <tbody>${tableRows}</tbody>
+    </table>
+  `;
+  setMsg("cmpMsg", "ok", `比較完了: 平均ズレ ${meanAbsDelta.toFixed(1)}ランク、Top10一致 ${top10Overlap}/10、Bottom5一致 ${bottom5Overlap}/5`);
+}
+
+function initResults() {
+  $("btnExportJson").addEventListener("click", exportJson);
+  $("btnExportCsv").addEventListener("click", exportCsv);
+  $("btnPrint").addEventListener("click", downloadPdf);
+  $("btnRetake").addEventListener("click", () => {
+    if (confirm("回答を消してもう一度受けますか？")) {
+      clearState();
+      state = { user: { name: "", team: "" }, mode: "both", answers: {}, cursor: 0, brainAnswers: {}, brainCursor: 0, phase: "sf", startedAt: null };
+      $("userName").value = "";
+      $("userTeam").value = "";
+      $("btnResume").style.display = "none";
+      show("intro");
+    }
+  });
+  // Calibration
+  $("btnSaveGallup").addEventListener("click", saveGallup);
+  $("btnFillGallupExample").addEventListener("click", fillGallupExample);
+  $("btnCompare").addEventListener("click", compareWithGallup);
+}
+
+// Boot — admin mode toggle via ?admin=true
+if (new URLSearchParams(location.search).get("admin") === "true") {
+  document.body.classList.add("admin-mode");
+}
+
+initIntro();
+initQuiz();
+initResults();
+show("intro");
+</script>
+</body>
+</html>

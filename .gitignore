@@ -1,0 +1,23 @@
+# 個人診断結果は絶対にコミットしない
+analysis/strengths-calibration/results/
+analysis/strengths-calibration/comparison/
+results/
+*.json.local
+
+# Node
+node_modules/
+package-lock.json
+yarn.lock
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Env
+.env
+.env.local
