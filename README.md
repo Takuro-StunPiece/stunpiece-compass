@@ -4,7 +4,7 @@
 
 ストレングスファインダー（CliftonStrengths）に着想を得た34資質ランキング ＋ 4脳分類（16タイプ）の統合プロフィール診断。
 
-🌐 **公開URL**: <https://strengths.stunpiece.com>
+🌐 **公開URL**: <https://compass.stunpiece.com>
 
 ## 概要
 
@@ -20,7 +20,7 @@
 
 ## 使い方（受験者向け）
 
-1. <https://strengths.stunpiece.com> を開く
+1. <https://compass.stunpiece.com> を開く
 2. 受けたいパートを選択（**すべて受ける** / ストレングスのみ / 4脳のみ）
 3. 名前と所属（任意）を入力して **「診断を開始する」**
 4. A/B のどちらが当てはまるかを5段階で選択（40秒で次の問題へ自動移動）
@@ -44,7 +44,7 @@ URLに `?admin=true` を付与すると、Calibrationセクション（Gallup公
 通常のユーザーには表示されません。
 
 ```
-https://strengths.stunpiece.com/?admin=true
+https://compass.stunpiece.com/?admin=true
 ```
 
 このセクションでは:
@@ -114,10 +114,10 @@ TTL: 3600
 
 #### B. GitHubリポジトリ側
 
-1. リポジトリ直下の `CNAME` ファイル（同梱済み）が `strengths.stunpiece.com` を指している
-2. Settings → Pages → Custom domain に `strengths.stunpiece.com` を入力 → Save
+1. リポジトリ直下の `CNAME` ファイル（同梱済み）が `compass.stunpiece.com` を指している
+2. Settings → Pages → Custom domain に `compass.stunpiece.com` を入力 → Save
 3. **Enforce HTTPS** にチェック（DNSが効いてから）
-4. 5〜30分後、`https://strengths.stunpiece.com` でアクセス可能
+4. 5〜30分後、`https://compass.stunpiece.com` でアクセス可能
 
 ### 4. 完成
 
